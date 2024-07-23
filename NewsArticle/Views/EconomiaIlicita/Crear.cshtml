@@ -1,0 +1,24 @@
+﻿@model NewsArticle.Models.EconomiaIlicita
+
+@{
+    ViewData["Title"] = "Crear Economía Ilícita";
+}
+
+<h1>Crear Economía Ilícita</h1>
+
+<div class="m-4">
+    <form asp-action="Crear" method="post">
+        <div class="form-group">
+            <label asp-for="NombreEconomiaIlicita" class="control-label"></label>
+            <input asp-for="NombreEconomiaIlicita" class="form-control" />
+            <span asp-validation-for="NombreEconomiaIlicita" class="text-danger"></span>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Crear</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

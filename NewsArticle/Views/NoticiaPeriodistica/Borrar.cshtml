@@ -1,0 +1,40 @@
+﻿@model NewsArticle.Models.NotaPeriodistica
+
+@{
+    ViewBag.Title = "Borrar Nota Periodística";
+}
+
+<h2>Borrar Nota Periodística</h2>
+
+<h3>¿Está seguro que desea borrar esta nota periodística?</h3>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>URL</th>
+            <th>Palabra Clave</th>
+            <th>Fecha de Publicación</th>
+            <th>Fecha del Hecho</th>
+            <th>País</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@Model.Titulo</td>
+            <td>@Model.UrlFuente</td>
+            <td>@Model.MostrarNombrePalabraClave</td>
+            <td>@Model.FechaPublicacion.ToShortDateString()</td>
+            <td>@Model.FechaHecho.ToShortDateString()</td>
+            <td>@Model.MostrarNombrePaís</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="mt-3">
+    <form asp-action="BorrarConfirmado" method="post">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Borrar" class="btn btn-danger" />
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

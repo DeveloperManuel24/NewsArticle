@@ -1,0 +1,22 @@
+﻿@model NewsArticle.Models.Incautacion
+
+@{
+    ViewData["Title"] = "Borrar Incautación";
+}
+
+<div class="m-4">
+    <h1>¿Está seguro de que desea borrar esta incautación?</h1>
+    <h3>"@Model.TipoIncautacion"</h3>
+
+    <form asp-action="Borrar">
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <button class="btn btn-danger">Borrar</button>
+        <a class="btn btn-secondary" asp-action="Index">Cancelar</a>
+    </form>
+    <h1 class="p-3 mt-5 badge text-bg-danger big-text">Si estás seguro de que ninguna incautación está ligada a una nota periodística y que no sea afectada, podrás eliminar la incautación.</h1>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

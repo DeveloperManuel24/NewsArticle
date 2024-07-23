@@ -1,0 +1,80 @@
+﻿@model NewsArticle.Models.NotaPeriodistica
+
+@{
+    ViewData["Title"] = "Detalles de la Noticia Periodística";
+}
+
+<div class="m-4">
+    <h1>Detalles de la Noticia Periodística</h1>
+    <a asp-action="Index" class="btn btn-success mb-3">Regresar</a>
+    <a asp-action="Editar" asp-route-id="@Model.Id" class="btn btn-primary mb-3">Editar</a>
+    <a asp-action="Borrar" asp-route-id="@Model.Id" class="btn btn-danger mb-3">Eliminar</a>
+    <table class="table table-striped table-hover table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Campo</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>Título</td><td>@Model.Titulo</td></tr>
+            <tr><td>Palabra Clave</td><td>@Model.MostrarNombrePalabraClave</td></tr>
+            <tr><td>Url Fuente</td><td>@Model.UrlFuente</td></tr>
+            <tr><td>Nombre Fuente</td><td>@Model.NombreFuente</td></tr>
+            <tr><td>Fecha Publicación</td><td>@Model.FechaPublicacion.ToString("dd/MM/yyyy")</td></tr>
+            <tr><td>Año Publicación</td><td>@Model.AnoPublicacion</td></tr>
+            <tr><td>Fecha Hecho</td><td>@Model.FechaHecho.ToString("dd/MM/yyyy")</td></tr>
+            <tr><td>Año Hecho</td><td>@Model.AnoHecho</td></tr>
+            <tr><td>Nota Grande</td><td>@Model.NotaGrande</td></tr>
+            <tr><td>País</td><td>@Model.MostrarNombrePaís</td></tr>
+            <tr><td>Departamento</td><td>@Model.MostrarNombreDepartamento</td></tr>
+            <tr><td>Comarca</td><td>@Model.MostrarNombreComarca</td></tr>
+            <tr><td>Municipio</td><td>@Model.MostrarNombreMunicipio</td></tr>
+            <tr><td>Aldea</td><td>@Model.MostrarNombreAldea</td></tr>
+            <tr><td>Ruta Carretera</td><td>@Model.rutaCarretera</td></tr>
+            <tr><td>Latitud</td><td>@Model.Latitud</td></tr>
+            <tr><td>Longitud</td><td>@Model.Longitud</td></tr>
+            <tr><td>Nombre Cartel</td><td>@Model.NombreCartel</td></tr>
+            <tr><td>Nombre Operación Policial</td><td>@Model.NombreOperacionPolicial</td></tr>
+            <tr><td>Hubo Violencia</td><td>@Model.MostrarNombreHuboViolencia</td></tr>
+            <tr><td>Tipo Transporte</td><td>@Model.MostrarNombreTipoTransporte</td></tr>
+            <tr><td>Cantidad en Kilos</td><td>@Model.CantidadEnKilos</td></tr>
+            <tr><td>Monto en Dólares Transporte</td><td>@Model.MontoEnDolaresTransporte</td></tr>
+            <tr><td>Número Pistas Destruidas</td><td>@Model.NumeroPistasDestruidas</td></tr>
+            <tr><td>Monto en Dólares Intento Soborno</td><td>@Model.MontoEnDolaresIntentoSoborno</td></tr>
+            <tr><td>Breve Nota</td><td>@Model.BreveNota</td></tr>
+            <tr><td>Institución Responsable</td><td>@Model.InstitucionResponsable</td></tr>
+            <tr><td>Instituciones de Apoyo</td><td>@Model.InstitucionesDeApoyo</td></tr>
+            <tr><td>Sector Económico</td><td>@Model.MostrarNombreSectorEconómico</td></tr>
+            <tr><td>Economía Ilícita</td><td>@Model.MostrarNombreEconomíaIlícita</td></tr>
+            <tr><td>Nombre Fauna</td><td>@Model.NombreFauna</td></tr>
+            <tr><td>Cantidad Fauna</td><td>@Model.CantidadFauna</td></tr>
+            <tr><td>Nombre Flora</td><td>@Model.NombreFlora</td></tr>
+            <tr><td>Cantidad Flora</td><td>@Model.CantidadFlora</td></tr>
+            <tr><td>Cantidad Personas Trata</td><td>@Model.CantidadPersonasTrata</td></tr>
+            <tr><td>Nacionalidad Trata</td><td>@Model.MostrarNombreNacionalidadTrata</td></tr>
+            <tr><td>Número Detenidos</td><td>@Model.NumeroDetenidos</td></tr>
+            <tr><td>Nacionalidad Detenidos</td><td>@Model.NacionalidadDetenidos</td></tr>
+            <tr><td>Nombre Área Protegida</td><td>@Model.NombreAreaProtegida</td></tr>
+            <tr><td>Número Hectáreas Área Protegida</td><td>@Model.NumeroHectareasAreaProtegida</td></tr>
+            <tr><td>Incautación</td><td>@Model.MostrarNombreIncautación</td></tr>
+            <tr><td>Droga</td><td>@Model.MostrarNombreDroga</td></tr>
+            <tr><td>Matas Arbustos</td><td>@Model.MostrarNombreMatasArbustos</td></tr>
+            <tr><td>Número Matas Arbustos</td><td>@Model.NumeroMatasArbustos</td></tr>
+            <tr><td>Número Hectáreas</td><td>@Model.NumeroHectareas</td></tr>
+            <tr><td>Monto en Dólares Matas Arbustos</td><td>@Model.MontoEnDolaresMatasArbustos</td></tr>
+            <tr><td>Vehículo</td><td>@Model.MostrarNombreVehículo</td></tr>
+            <tr><td>Monto en Dólares Dinero</td><td>@Model.MontoEnDolaresDinero</td></tr>
+            <tr><td>Monto en Dólares Joyas</td><td>@Model.MontoEnDolaresJoyas</td></tr>
+            <tr><td>Número Inmuebles</td><td>@Model.NumeroInmuebles</td></tr>
+            <tr><td>Número Fincas</td><td>@Model.NumeroFincas</td></tr>
+            <tr><td>Número Hectáreas Terrenos</td><td>@Model.NumeroHectareasTerrenos</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<footer class="border-top footer text-muted mt-auto">
+    <div class="container">
+        &copy; 2024 - Devine Sustainable Solutions, LLC
+    </div>
+</footer>

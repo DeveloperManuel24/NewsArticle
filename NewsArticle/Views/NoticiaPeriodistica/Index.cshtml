@@ -1,0 +1,145 @@
+﻿@model IEnumerable<NewsArticle.Models.NotaPeriodistica>
+
+@{
+    ViewData["Title"] = "Noticias Periodísticas";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-end mb-3">
+        <div class="d-flex flex-column align-items-end">
+            <span class="mb-4"><strong>Nota: Talí como tienes el listado, asi se descargará el excel</strong></span>
+
+            <a asp-action="ExportarExcel"
+               asp-route-titulo="@ViewBag.TituloFiltro"
+               asp-route-palabraClaveId="@ViewBag.PalabraClaveIdFiltro"
+               asp-route-fechaHecho="@ViewBag.FechaHechoFiltro"
+               asp-route-AnoHecho="@ViewBag.AnoHechoFiltro"
+               asp-route-paisId="@ViewBag.PaisIdFiltro"
+               class="btn btn-success text-center mb-2"
+               style="width: auto; min-width: 100px;">
+                Reporte excel
+            </a>
+
+        </div>
+    </div>
+    <h1 class="mb-4">Noticias Periodísticas</h1>
+    <form method="get" asp-action="Index" class="mb-4">
+        <div class="row mb-3">
+            <div class="col-12 col-md-2">
+                <label for="titulo">Título</label>
+                <input type="text" class="form-control" id="titulo" name="titulo" value="@ViewBag.TituloFiltro" placeholder="Título" />
+            </div>
+            <div class="col-12 col-md-2">
+                <label for="palabraClaveId">Palabra Clave</label>
+                <select class="form-control" id="palabraClaveId" name="palabraClaveId">
+                    <option value="">Seleccionar...</option>
+                    @foreach (var item in ViewBag.PalabrasClaveList)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="col-12 col-md-2">
+                <label for="fechaHecho">Fecha del Hecho</label>
+                <input type="date" class="form-control" id="fechaHecho" name="fechaHecho" value="@ViewBag.FechaHechoFiltro" />
+            </div>
+            <div class="col-12 col-md-2">
+                <label for="AnoHecho">Año del Hecho</label>
+                <input type="number" class="form-control" id="AnoHecho" name="AnoHecho" value="@ViewBag.AnoHechoFiltro" placeholder="Año" />
+            </div>
+            <div class="col-12 col-md-2">
+                <label for="paisId">País</label>
+                <select class="form-control" id="paisId" name="paisId">
+                    <option value="">Seleccionar...</option>
+                    @foreach (var item in ViewBag.PaisesList)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+                <button type="button" class="btn btn-secondary ms-2" onclick="resetFilters()">Restablecer</button>
+                <a asp-action="Crear" class="btn btn-success ms-2">Crear nuevo</a>
+            </div>
+        </div>
+    </form>
+
+    <div class="results-section">
+        <h4 class="results-title">Resultados (@Model.Count())</h4>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Título</th>
+                        <th>URL</th>
+                        <th>Palabra Clave</th>
+                        <th>Fecha de Publicación</th>
+                        <th>Fecha del Hecho</th>
+                        <th>Año del Hecho</th>
+                        <th>País</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Titulo</td>
+                            <td><a href="@item.UrlFuente" target="_blank">@item.UrlFuente</a></td>
+                            <td>@item.MostrarNombrePalabraClave</td>
+                            <td>@item.FechaPublicacion.ToString("dd/MM/yyyy")</td>
+                            <td>@item.FechaHecho.ToString("dd/MM/yyyy")</td>
+                            <td>@item.AnoHecho</td>
+                            <td>@item.MostrarNombrePaís</td>
+                            <td>
+                                <a asp-action="ListadoCompleto" asp-route-id="@item.Id" class="btn btn-success btn-sm">Inspeccionar</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .results-section {
+        margin-top: 20px;
+    }
+
+    .results-title {
+        margin-bottom: 10px;
+        font-size: 1.25rem;
+    }
+
+    .table thead th {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .table tbody td {
+        vertical-align: middle;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .form-control, .btn {
+        border-radius: 0;
+    }
+</style>
+
+<script>
+    function resetFilters() {
+        document.getElementById('titulo').value = '';
+        document.getElementById('palabraClaveId').selectedIndex = 0;
+        document.getElementById('fechaHecho').value = '';
+        document.getElementById('AnoHecho').value = '';
+        document.getElementById('paisId').selectedIndex = 0;
+    }
+</script>

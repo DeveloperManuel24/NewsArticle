@@ -1,0 +1,23 @@
+﻿@model NewsArticle.Models.TipoViolencia
+
+@{
+    ViewData["Title"] = "Editar Tipo de Violencia";
+}
+
+<h1>Editar Tipo de Violencia</h1>
+
+<div class="m-4">
+    <form asp-action="Editar" method="post">
+        <div class="form-group">
+            <label asp-for="TipoViolenciaNombre" class="control-label"></label>
+            <input asp-for="TipoViolenciaNombre" class="form-control" />
+            <span asp-validation-for="TipoViolenciaNombre" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

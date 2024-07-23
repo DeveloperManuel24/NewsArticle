@@ -1,0 +1,23 @@
+﻿@model NewsArticle.Models.Incautacion
+
+@{
+    ViewData["Title"] = "Editar Incautación";
+}
+
+<h1>Editar Incautación</h1>
+
+<div class="m-4">
+    <form asp-action="Editar" method="post">
+        <div class="form-group">
+            <label asp-for="TipoIncautacion" class="control-label"></label>
+            <input asp-for="TipoIncautacion" class="form-control" />
+            <span asp-validation-for="TipoIncautacion" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

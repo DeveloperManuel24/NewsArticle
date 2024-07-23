@@ -1,0 +1,23 @@
+﻿@model NewsArticle.Models.MatasArbustos
+
+@{
+    ViewData["Title"] = "Crear Matas o Arbustos";
+}
+
+<h1>Crear Matas o Arbustos</h1>
+
+<div class="m-4">
+    <form asp-action="Crear" method="post">
+        <div class="form-group">
+            <label asp-for="TipoMatasArbustos" class="control-label"></label>
+            <input asp-for="TipoMatasArbustos" class="form-control" />
+            <span asp-validation-for="TipoMatasArbustos" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Crear</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

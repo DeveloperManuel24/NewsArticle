@@ -1,0 +1,30 @@
+﻿@model IEnumerable<NewsArticle.Models.Transporte>
+
+@{
+    ViewData["Title"] = "Transportes";
+}
+
+<div class="m-4">
+    <h1>Transportes</h1>
+    <a asp-action="Crear" class="btn btn-primary mb-3">Crear nuevo</a>
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Tipo de Transporte</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.TipoTransporte</td>
+                    <td>
+                        <a asp-action="Editar" asp-route-id="@item.Id" class="btn btn-primary">Editar</a>
+                        <a asp-action="Borrar" asp-route-id="@item.Id" class="btn btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

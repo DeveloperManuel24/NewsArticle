@@ -1,0 +1,46 @@
+﻿@model NewsArticle.Models.PalabraClaveViewModel
+
+@{
+    ViewData["Title"] = "Palabras Clave";
+}
+
+<div class="m-4">
+    <h1>Palabras Clave</h1>
+    <h5>La palabra clave es el punto de arranque en lo que es la nota periodistica.</h5>
+
+    <a asp-action="Crear" class="btn btn-primary mb-3">Crear nuevo</a>
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var palabraClave in Model.PalabrasClave)
+            {
+                <tr>                   
+                    <td>
+                        @palabraClave.NombrePalabraClave
+                    </td>
+                    <td>
+                        <a class="btn btn-primary m-1" asp-action="Editar" asp-route-id="@palabraClave.Id">Editar</a>
+                        <a class="btn btn-danger m-1" asp-action="Borrar" asp-route-id="@palabraClave.Id">Borrar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+@* 
+@section Scripts {
+    <script>
+        $("#cantidadRecordsPorPagina").change(function () {
+            const recordsPorPagina = $(this).val();
+            location.href = `/categorias/?pagina=1&recordsPorPagina=${recordsPorPagina}`;
+        });
+    </script>
+} *@

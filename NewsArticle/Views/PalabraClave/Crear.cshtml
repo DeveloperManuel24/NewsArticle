@@ -1,0 +1,53 @@
+﻿@model NewsArticle.Models.PalabraClave
+
+@{
+    ViewData["Title"] = "Crear Palabra Clave";
+}
+
+<div class="m-4">
+    <h1>Crear Palabra Clave</h1>
+    <h5 class="mb-3">La palabra clave es el punto de arranque en lo que es la nota periodística.</h5>
+
+    <form asp-action="Crear" enctype="multipart/form-data" onsubmit="return validateForm()">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="mb-3">
+            <label asp-for="NombrePalabraClave" class="form-label"></label>
+            <input asp-for="NombrePalabraClave" class="form-control" id="NombrePalabraClave" />
+            <span asp-validation-for="NombrePalabraClave" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label for="icono" class="form-label">Icono (PNG)</label>
+            <input type="file" class="form-control" id="icono" name="icono" accept=".png" />
+            <span class="text-danger" id="iconoError"></span>
+        </div>
+
+        <button class="btn btn-primary">Enviar</button>
+        <a class="btn btn-secondary" asp-action="Index">Cancelar</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        function validateForm() {
+            var palabraClave = document.getElementById("NombrePalabraClave").value.trim();
+            var iconoInput = document.getElementById("icono");
+            var iconoError = document.getElementById("iconoError");
+
+            if (iconoInput.files.length === 0) {
+                iconoError.textContent = "Debe subir un archivo PNG.";
+                return false;
+            }
+
+            var iconoFileName = iconoInput.files[0].name.split('.')[0].trim();
+
+            if (palabraClave !== iconoFileName) {
+                iconoError.textContent = "El nombre del archivo PNG debe coincidir con la palabra clave.";
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+}

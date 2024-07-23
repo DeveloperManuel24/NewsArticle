@@ -1,0 +1,23 @@
+﻿@model NewsArticle.Models.SectorEconomico
+
+@{
+    ViewData["Title"] = "Editar Sector Económico";
+}
+
+<h1>Editar Sector Económico</h1>
+
+<div class="m-4">
+    <form asp-action="Editar" method="post">
+        <div class="form-group">
+            <label asp-for="NombreSector" class="control-label"></label>
+            <input asp-for="NombreSector" class="form-control" />
+            <span asp-validation-for="NombreSector" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

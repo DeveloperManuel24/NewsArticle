@@ -1,0 +1,89 @@
+﻿@model IEnumerable<NewsArticle.Models.NotaPeriodistica>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa General</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        #map {
+            height: 90vh; /* Ajustar la altura del mapa */
+            width: 100%;
+        }
+
+        .btn-container {
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800">
+    <div class="btn-container">
+        <button id="download-btn" class="btn btn-primary mb-3">Descargar PDF</button>
+    </div>
+    <div id="map-container">
+        <div id="map"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var map = L.map('map').setView([8.537981, -80.782127], 7); // Coordenadas centradas en Panamá
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            L.Control.geocoder().addTo(map); // Agregar buscador
+
+            var notas = @Html.Raw(Json.Serialize(Model));
+
+            notas.forEach(function (nota) {
+                if (nota.latitud && nota.longitud) {
+                    var iconUrl = '/images/icons/' + nota.nombrePalabraClave + '.png';
+                    var icon = L.icon({
+                        iconUrl: iconUrl,
+                        iconSize: [20, 40], // Ajusta el tamaño del icono
+                        iconAnchor: [25, 82],
+                        popupAnchor: [1, -34],
+                        shadowSize: [82, 82]
+                    });
+
+                    L.marker([nota.latitud, nota.longitud], { icon: icon })
+                        .bindPopup("<b>" + nota.nombrePalabraClave + "</b><br>Lat: " + nota.latitud + "<br>Long: " + nota.longitud)
+                        .addTo(map);
+                }
+            });
+
+            $('#download-btn').click(function () {
+                setTimeout(() => {
+                    html2canvas(document.querySelector("#map"), { useCORS: true, scale: 2 }).then(canvas => {
+                        var imgData = canvas.toDataURL('image/png');
+                        var pdf = new jspdf.jsPDF('landscape', 'mm', 'a4');
+                        var imgWidth = 297;
+                        var imgHeight = 210; // Altura fija de A4 en paisaje
+                        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                        pdf.save("mapa_general.pdf");
+                    });
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>

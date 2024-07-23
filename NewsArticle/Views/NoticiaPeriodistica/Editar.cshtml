@@ -1,0 +1,829 @@
+﻿@model NewsArticle.Models.NotaPeriodistica
+
+@{
+    ViewData["Title"] = "Editar Noticia Periodística";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <style>
+        .bg-custom-light {
+            background-color: #e9f7ef;
+        }
+
+        .bg-custom-dark {
+            background-color: #28A745;
+        }
+
+        .text-custom-light {
+            color: #e3f2fd;
+        }
+
+        .text-custom-dark {
+            color: #0275d8;
+        }
+
+        .button-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .btn-custom {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #004085;
+            }
+
+        .nav-tabs {
+            border-bottom: 2px solid #28A745;
+        }
+
+            .nav-tabs .nav-item {
+                margin-bottom: -1px;
+            }
+
+            .nav-tabs .nav-link {
+                color: #fff;
+                background-color: #28A745;
+                border: 1px solid #28A745;
+                border-radius: 0;
+                padding: 10px 15px;
+            }
+
+                .nav-tabs .nav-link.active {
+                    background-color: #218838;
+                    border-bottom-color: transparent;
+                }
+
+                .nav-tabs .nav-link:hover {
+                    background-color: #218838;
+                    color: #fff;
+                }
+
+        #map {
+            height: 600px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800">
+    <div class="container my-4">
+        <div class="d-flex justify-content-center">
+            <a asp-action="Index" class="btn btn-success mb-3 text-center" style="width: auto; min-width: 100px;">
+                Regresar
+            </a>
+        </div>
+        <div class="container my-4">
+            <form method="post" asp-action="Editar" id="mainForm">
+                @Html.AntiForgeryToken()
+                <div class="card">
+                    <div class="card-header bg-custom-dark text-white">
+                        <div class="d-flex justify-content-between">
+                            <h4 class="form-title">Formulario de Entrada</h4>
+                            <div class="form-group">
+                                <label asp-for="IdPalabraClave" class="control-label">Palabra clave</label>
+                                <select asp-for="IdPalabraClave" class="form-control" asp-items="ViewBag.PalabrasClaveList" id="IdPalabraClave">
+                                    <option value="">Seleccione una palabra clave</option>
+                                </select>
+                                <span asp-validation-for="IdPalabraClave" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <ul class="nav nav-tabs d-flex justify-content-between mb-5" id="myTab" role="tablist">
+                            <li class="nav-item flex-fill">
+                                <a class="nav-link active" id="noticia-tab" data-toggle="tab" href="#noticia" role="tab" aria-controls="noticia" aria-selected="true">Información de la noticia y el hecho</a>
+                            </li>
+                            <li class="nav-item flex-fill">
+                                <a class="nav-link" id="area-tab" data-toggle="tab" href="#area" role="tab" aria-controls="area" aria-selected="false">Área geográfica</a>
+                            </li>
+                            <li class="nav-item flex-fill">
+                                <a class="nav-link" id="transporte-tab" data-toggle="tab" href="#transporte" role="tab" aria-controls="transporte" aria-selected="false">Decomiso de droga por tipo de transporte</a>
+                            </li>
+                            <li class="nav-item flex-fill">
+                                <a class="nav-link" id="sobornos-tab" data-toggle="tab" href="#sobornos" role="tab" aria-controls="sobornos" aria-selected="false">Sobornos</a>
+                            </li>
+                            <li class="nav-item flex-fill">
+                                <a class="nav-link" id="economico-tab" data-toggle="tab" href="#economico" role="tab" aria-controls="economico" aria-selected="false">Sector económico afectado</a>
+                            </li>
+                            <li class="nav-item flex-fill">
+                                <a class="nav-link" id="ilícita-tab" data-toggle="tab" href="#ilícita" role="tab" aria-controls="ilícita" aria-selected="false">Tipo de economía ilícita</a>
+                            </li>
+                            <li class="nav-item flex-fill">
+                                <a class="nav-link" id="detenidos-tab" data-toggle="tab" href="#detenidos" role="tab" aria-controls="detenidos" aria-selected="false">Detenidos</a>
+                            </li>
+                            <li class="nav-item flex-fill">
+                                <a class="nav-link" id="deforestacion-tab" data-toggle="tab" href="#deforestacion" role="tab" aria-controls="deforestacion" aria-selected="false">Vinculado con deforestación</a>
+                            </li>
+                            <li class="nav-item flex-fill">
+                                <a class="nav-link" id="incautaciones-tab" data-toggle="tab" href="#incautaciones" role="tab" aria-controls="incautaciones" aria-selected="false">Incautaciones</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="noticia" role="tabpanel" aria-labelledby="noticia-tab">
+                                <div class="form-group">
+                                    <label asp-for="Titulo" class="control-label">Titulo de Nota</label>
+                                    <input asp-for="Titulo" class="form-control" placeholder="Ingrese el título">
+                                    <span asp-validation-for="Titulo" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="UrlFuente" class="control-label">URL</label>
+                                    <input asp-for="UrlFuente" class="form-control" placeholder="Ingrese la URL">
+                                    <span asp-validation-for="UrlFuente" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="NombreFuente" class="control-label">Nombre Fuente</label>
+                                    <input asp-for="NombreFuente" class="form-control" placeholder="Ingrese el nombre de la fuente">
+                                    <span asp-validation-for="NombreFuente" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="FechaPublicacion" class="control-label">Fecha de Publicación</label>
+                                    <input asp-for="FechaPublicacion" class="form-control">
+                                    <span asp-validation-for="FechaPublicacion" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="AnoPublicacion" class="control-label">Año de Publicación</label>
+                                    <input asp-for="AnoPublicacion" class="form-control" placeholder="Ingrese el año de publicación">
+                                    <span asp-validation-for="AnoPublicacion" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="FechaHecho" class="control-label">Fecha del Hecho</label>
+                                    <input asp-for="FechaHecho" class="form-control">
+                                    <span asp-validation-for="FechaHecho" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="AnoHecho" class="control-label">Año del Hecho</label>
+                                    <input asp-for="AnoHecho" class="form-control" placeholder="Ingrese el año del hecho">
+                                    <span asp-validation-for="AnoHecho" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="NotaGrande" class="control-label">Notas Periodística</label>
+                                    <textarea asp-for="NotaGrande" class="form-control" rows="10" placeholder="Escribe tu texto aquí..."></textarea>
+                                    <span asp-validation-for="NotaGrande" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="area" role="tabpanel" aria-labelledby="area-tab">
+                                <div class="form-group">
+                                    <label asp-for="IdPais" class="control-label">País</label>
+                                    <select id="pais" name="IdPais" class="form-control" asp-for="IdPais">
+                                        <option value="" disabled selected>Seleccione el país</option>
+                                        @foreach (var pais in ViewBag.PaisesList)
+                                        {
+                                            <option value="@pais.Value">@pais.Text</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="IdPais" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="IdDepartamento" class="control-label">Provincia/Departamento</label>
+                                    <select id="provincia" name="IdDepartamento" class="form-control" asp-for="IdDepartamento">
+                                        <option value="" disabled selected>Seleccione la provincia</option>
+                                        @foreach (var provincia in ViewBag.ProvinciasList)
+                                        {
+                                            <option value="@provincia.Value">@provincia.Text</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="IdDepartamento" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="IdComarca" class="control-label">Comarca</label>
+                                    <select id="comarca" name="IdComarca" class="form-control" asp-for="IdComarca">
+                                        <option value="" disabled selected>Seleccione la comarca</option>
+                                        @foreach (var comarca in ViewBag.ComarcasList)
+                                        {
+                                            <option value="@comarca.Value">@comarca.Text</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="IdComarca" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="IdMunicipio" class="control-label">Distrito/Municipio</label>
+                                    <select id="distrito" name="IdMunicipio" class="form-control" asp-for="IdMunicipio">
+                                        <option value="" disabled selected>Seleccione el distrito</option>
+                                        @foreach (var distrito in ViewBag.DistritosList)
+                                        {
+                                            <option value="@distrito.Value">@distrito.Text</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="IdMunicipio" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="IdAldea" class="control-label">Corregimiento/Aldea</label>
+                                    <select id="corregimiento" name="IdAldea" class="form-control" asp-for="IdAldea">
+                                        <option value="" disabled selected>Seleccione el corregimiento</option>
+                                        @foreach (var corregimiento in ViewBag.CorregimientosList)
+                                        {
+                                            <option value="@corregimiento.Value">@corregimiento.Text</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="IdAldea" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="rutaCarretera" class="control-label">Ruta Carretera</label>
+                                    <input asp-for="rutaCarretera" class="form-control" placeholder="Ingrese la Ruta Carretera">
+                                    <span asp-validation-for="rutaCarretera" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Latitud" class="control-label">Latitud</label>
+                                    <input asp-for="Latitud" class="form-control" placeholder="Aqui va a aparecer la latitud">
+                                    <span asp-validation-for="Latitud" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Longitud" class="control-label">Longitud</label>
+                                    <input asp-for="Longitud" class="form-control" placeholder="Aqui va a aparecer la longitud">
+                                    <span asp-validation-for="Longitud" class="text-danger"></span>
+                                </div>
+                                <button id="botonMapa" type="button" class="btn btn-primary" onclick="saveFormData()">Ingresar al Mapa</button>
+                            </div>
+                            <div class="tab-pane fade" id="transporte" role="tabpanel" aria-labelledby="transporte-tab">
+                                <div class="form-group">
+                                    <label asp-for="NombreCartel" class="control-label">Nombre del Cártel u Organización Criminal</label>
+                                    <input asp-for="NombreCartel" class="form-control" placeholder="Ingrese el nombre del cártel">
+                                    <span asp-validation-for="NombreCartel" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="NombreOperacionPolicial" class="control-label">Nombre de la Operación Policial</label>
+                                    <input asp-for="NombreOperacionPolicial" class="form-control" placeholder="Ingrese el nombre de la operación">
+                                    <span asp-validation-for="NombreOperacionPolicial" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="huboViolencia" class="control-label">¿Hubo Violencia?</label>
+                                    <select asp-for="huboViolencia" class="form-control" asp-items="ViewBag.ViolenciaList">
+                                        <option value="">Seleccione un tipo de violencia</option>
+                                    </select>
+                                    <span asp-validation-for="huboViolencia" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="tipoTransporte" class="control-label">Tipo de Transporte</label>
+                                    <select asp-for="tipoTransporte" class="form-control" asp-items="ViewBag.TransporteList" id="tipoTransporte">
+                                        <option value="">Seleccione un tipo de transporte</option>
+                                    </select>
+                                    <span asp-validation-for="tipoTransporte" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="CantidadEnKilos" class="control-label">Cantidad de Kilos</label>
+                                    <input asp-for="CantidadEnKilos" class="form-control" id="CantidadEnKilos" placeholder="Ingrese la cantidad de kilos">
+                                    <span asp-validation-for="CantidadEnKilos" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="MontoEnDolaresTransporte" class="control-label">Monto en USD</label>
+                                    <input type="number" asp-for="MontoEnDolaresTransporte" class="form-control" id="MontoEnDolaresTransporte" placeholder="Ingrese el monto en USD" step="any">
+                                    <span asp-validation-for="MontoEnDolaresTransporte" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="NumeroPistasDestruidas" class="control-label">Número de Pistas de Aterrizaje</label>
+                                    <input asp-for="NumeroPistasDestruidas" class="form-control" id="NumeroPistasDestruidas" placeholder="Ingrese el número de pistas de aterrizaje">
+                                    <span asp-validation-for="NumeroPistasDestruidas" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="sobornos" role="tabpanel" aria-labelledby="sobornos-tab">
+                                <div class="form-group">
+                                    <label asp-for="MontoEnDolaresIntentoSoborno" class="control-label">Monto en USD del soborno</label>
+                                    <input type="number" asp-for="MontoEnDolaresIntentoSoborno" class="form-control" placeholder="Ingrese el monto en USD" step="any">
+                                    <span asp-validation-for="MontoEnDolaresIntentoSoborno" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="BreveNota" class="control-label">Breve Nota</label>
+                                    <textarea asp-for="BreveNota" class="form-control" rows="4" placeholder="Escribe tu texto aquí..."></textarea>
+                                    <span asp-validation-for="BreveNota" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="InstitucionResponsable" class="control-label">Institucion Responsable de la Operacion</label>
+                                    <input asp-for="InstitucionResponsable" class="form-control" placeholder="Ingrese la Institucion Responsable de la Operacion">
+                                    <span asp-validation-for="InstitucionResponsable" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="InstitucionesDeApoyo" class="control-label">Institución de Apoyo</label>
+                                    <input asp-for="InstitucionesDeApoyo" class="form-control" placeholder="Ingrese la Institución de Apoyo">
+                                    <span asp-validation-for="InstitucionesDeApoyo" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="economico" role="tabpanel" aria-labelledby="economico-tab">
+                                <div class="form-group">
+                                    <label asp-for="IdSectorEconomico" class="control-label">Sector Económico</label>
+                                    <select asp-for="IdSectorEconomico" class="form-control" asp-items="ViewBag.SectorEconomicoList">
+                                        <option value="" disabled selected>Seleccione un sector económico</option>
+                                    </select>
+                                    <span asp-validation-for="IdSectorEconomico" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="ilícita" role="tabpanel" aria-labelledby="ilícita-tab">
+                                <div class="form-group">
+                                    <label asp-for="IdEconomiaIlicita" class="control-label">Economia Ílicita</label>
+                                    <select asp-for="IdEconomiaIlicita" class="form-control" asp-items="ViewBag.EconomiasIlicitas">
+                                        <option value="" disabled selected>Seleccione una economia ílicita</option>
+                                    </select>
+                                    <span asp-validation-for="IdEconomiaIlicita" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="NombreFauna" class="control-label">Nombre de Fauna</label>
+                                    <input asp-for="NombreFauna" class="form-control" placeholder="Nombre de Fauna" />
+                                    <span asp-validation-for="NombreFauna" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="CantidadFauna" class="control-label">Cantidad de Fauna</label>
+                                    <input asp-for="CantidadFauna" class="form-control" type="number" placeholder="Cantidad de Fauna" />
+                                    <span asp-validation-for="CantidadFauna" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="NombreFlora" class="control-label">Nombre de Flora</label>
+                                    <input asp-for="NombreFlora" class="form-control" placeholder="Nombre de Flora" />
+                                    <span asp-validation-for="NombreFlora" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="CantidadFlora" class="control-label">Cantidad de Flora</label>
+                                    <input asp-for="CantidadFlora" class="form-control" type="number" placeholder="Cantidad de Flora" />
+                                    <span asp-validation-for="CantidadFlora" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="CantidadPersonasTrata" class="control-label">Cantidad de Personas en Trata</label>
+                                    <input asp-for="CantidadPersonasTrata" class="form-control" type="number" placeholder="Cantidad de Personas en Trata" />
+                                    <span asp-validation-for="CantidadPersonasTrata" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="NacionalidadTrata" class="control-label">Nacionalidad de Personas en Trata</label>
+                                    <select id="NacionalidadTrata" class="form-control" asp-for="NacionalidadTrata">
+                                        <option value="" disabled selected>Nacionalidad de Personas en Trata</option>
+                                        @foreach (var pais in ViewBag.PaisesList)
+                                        {
+                                            <option value="@pais.Value">@pais.Text</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="NacionalidadTrata" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="detenidos" role="tabpanel" aria-labelledby="detenidos-tab">
+                                <div class="form-group">
+                                    <label asp-for="NumeroDetenidos" class="control-label">Numero de Detenidos</label>
+                                    <input asp-for="NumeroDetenidos" class="form-control" type="number" placeholder="Cantidad de Fauna" />
+                                    <span asp-validation-for="NumeroDetenidos" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="NacionalidadDetenidos" class="control-label">Nacionalidad de Detenidos</label>
+                                    <input asp-for="NacionalidadDetenidos" class="form-control" placeholder="Ingrese de que pais o paises eran">
+                                    <span asp-validation-for="NacionalidadDetenidos" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="deforestacion" role="tabpanel" aria-labelledby="deforestacion-tab">
+                                <div class="form-group">
+                                    <label asp-for="NombreAreaProtegida" class="control-label">Nombre de Area Protegida</label>
+                                    <input asp-for="NombreAreaProtegida" class="form-control" placeholder="Nombre de Area Protegida" />
+                                    <span asp-validation-for="NombreAreaProtegida" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="NumeroHectareasAreaProtegida" class="control-label">Numero de Hectareas Deforestacion</label>
+                                    <input asp-for="NumeroHectareasAreaProtegida" class="form-control" type="number" placeholder="Numero de Hectareas Deforestacion" />
+                                    <span asp-validation-for="NumeroHectareasAreaProtegida" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="incautaciones" role="tabpanel" aria-labelledby="incautaciones-tab">
+                                <div class="form-group">
+                                    <label asp-for="IdIncautacion" class="control-label">Incautaciones</label>
+                                    <select asp-for="IdIncautacion" class="form-control" asp-items="ViewBag.IncautacionesList" id="IdIncautacion">
+                                        <option value="" disabled selected>Seleccione una incautación</option>
+                                    </select>
+                                    <span asp-validation-for="IdIncautacion" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="IdDroga" class="control-label">Drogas</label>
+                                    <select asp-for="IdDroga" class="form-control" asp-items="ViewBag.DrogasList" id="IdDroga">
+                                        <option value="" disabled selected>Seleccione una droga</option>
+                                    </select>
+                                    <span asp-validation-for="IdDroga" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="IdMatasArbustos" class="control-label">Matas o Arbustos</label>
+                                    <select asp-for="IdMatasArbustos" class="form-control" asp-items="ViewBag.MatasArbustosList" id="IdMatasArbustos">
+                                        <option value="" disabled selected>Seleccione una mata o arbusto</option>
+                                    </select>
+                                    <span asp-validation-for="IdMatasArbustos" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="NumeroMatasArbustos" class="control-label">Número de Matas o Arbustos</label>
+                                    <input asp-for="NumeroMatasArbustos" class="form-control" placeholder="Ingrese el número de matas o arbustos" id="NumeroMatasArbustos">
+                                    <span asp-validation-for="NumeroMatasArbustos" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="NumeroHectareas" class="control-label">Número de Hectarias Arbustos</label>
+                                    <input asp-for="NumeroHectareas" class="form-control" placeholder="Ingrese el número de hectarias de Arbustos" id="NumeroHectareas">
+                                    <span asp-validation-for="NumeroHectareas" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="MontoEnDolaresMatasArbustos" class="control-label">Monto en USD de Matas o Arbustos</label>
+                                    <input type="number" asp-for="MontoEnDolaresMatasArbustos" class="form-control" placeholder="Ingrese el monto en USD" step="any" id="MontoEnDolaresMatasArbustos">
+                                    <span asp-validation-for="MontoEnDolaresMatasArbustos" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="IdVehiculo" class="control-label">Vehículos</label>
+                                    <select asp-for="IdVehiculo" class="form-control" asp-items="ViewBag.VehiculosList" id="IdVehiculo">
+                                        <option value="" disabled selected>Seleccione un vehículo</option>
+                                    </select>
+                                    <span asp-validation-for="IdVehiculo" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="MontoEnDolaresDinero" class="control-label">Monto en USD de Dinero</label>
+                                    <input type="number" asp-for="MontoEnDolaresDinero" class="form-control" placeholder="Ingrese el monto en USD" step="any" id="MontoEnDolaresDinero">
+                                    <span asp-validation-for="MontoEnDolaresDinero" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="MontoEnDolaresJoyas" class="control-label">Monto en USD de Joyas</label>
+                                    <input type="number" asp-for="MontoEnDolaresJoyas" class="form-control" placeholder="Ingrese el monto en USD" step="any" id="MontoEnDolaresJoyas">
+                                    <span asp-validation-for="MontoEnDolaresJoyas" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="NumeroInmuebles" class="control-label">Número de Inmuebles</label>
+                                    <input asp-for="NumeroInmuebles" class="form-control" placeholder="Ingrese el número de inmuebles" id="NumeroInmuebles">
+                                    <span asp-validation-for="NumeroInmuebles" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="NumeroFincas" class="control-label">Número de Fincas</label>
+                                    <input asp-for="NumeroFincas" class="form-control" placeholder="Ingrese el número de fincas" id="NumeroFincas">
+                                    <span asp-validation-for="NumeroFincas" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="NumeroHectareasTerrenos" class="control-label">Número de Hectáreas</label>
+                                    <input asp-for="NumeroHectareasTerrenos" class="form-control" placeholder="Ingrese el número de hectáreas del terreno" id="NumeroHectareasTerrenos">
+                                    <span asp-validation-for="NumeroHectareasTerrenos" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Botón de enviar -->
+                    <div class="card-footer text-center">
+                        <button type="submit" class="btn btn-custom-dark bg-secondary text-white">Enviar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <footer class="border-top footer text-muted mt-auto">
+            <div class="container">
+                &copy; 2024 - Devine Sustainable Solutions, LLC
+            </div>
+        </footer>
+        @section Scripts {
+            <partial name="_ValidationScriptsPartial" />
+        }
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        <script>
+            function saveFormData() {
+                var formData = {
+                    Id: @Model.Id,
+                    Titulo: $('input[name="Titulo"]').val(),
+                    UrlFuente: $('input[name="UrlFuente"]').val(),
+                    NombreFuente: $('input[name="NombreFuente"]').val(),
+                    FechaPublicacion: $('input[name="FechaPublicacion"]').val(),
+                    AnoPublicacion: $('input[name="AnoPublicacion"]').val(),
+                    FechaHecho: $('input[name="FechaHecho"]').val(),
+                    AnoHecho: $('input[name="AnoHecho"]').val(),
+                    NotaGrande: $('textarea[name="NotaGrande"]').val(),
+                    IdPais: $('#pais').val(),
+                    IdDepartamento: $('#provincia').val(),
+                    IdComarca: $('#comarca').val(),
+                    IdMunicipio: $('#distrito').val(),
+                    IdAldea: $('#corregimiento').val(),
+                    rutaCarretera: $('input[name="rutaCarretera"]').val(),
+                    NombreCartel: $('input[name="NombreCartel"]').val(),
+                    NombreOperacionPolicial: $('input[name="NombreOperacionPolicial"]').val(),
+                    huboViolencia: $('#huboViolencia').val(),
+                    tipoTransporte: $('#tipoTransporte').val(),
+                    CantidadEnKilos: $('input[name="CantidadEnKilos"]').val(),
+                    MontoEnDolaresTransporte: $('input[name="MontoEnDolaresTransporte"]').val(),
+                    NumeroPistasDestruidas: $('input[name="NumeroPistasDestruidas"]').val(),
+                    MontoEnDolaresIntentoSoborno: $('input[name="MontoEnDolaresIntentoSoborno"]').val(),
+                    BreveNota: $('textarea[name="BreveNota"]').val(),
+                    InstitucionResponsable: $('input[name="InstitucionResponsable"]').val(),
+                    InstitucionesDeApoyo: $('input[name="InstitucionesDeApoyo"]').val(),
+                    IdSectorEconomico: $('#IdSectorEconomico').val(),
+                    IdEconomiaIlicita: $('#IdEconomiaIlicita').val(),
+                    NombreFauna: $('input[name="NombreFauna"]').val(),
+                    CantidadFauna: $('input[name="CantidadFauna"]').val(),
+                    NombreFlora: $('input[name="NombreFlora"]').val(),
+                    CantidadFlora: $('input[name="CantidadFlora"]').val(),
+                    CantidadPersonasTrata: $('input[name="CantidadPersonasTrata"]').val(),
+                    NacionalidadTrata: $('#NacionalidadTrata').val(),
+                    NumeroDetenidos: $('input[name="NumeroDetenidos"]').val(),
+                    NacionalidadDetenidos: $('input[name="NacionalidadDetenidos"]').val(),
+                    NombreAreaProtegida: $('input[name="NombreAreaProtegida"]').val(),
+                    NumeroHectareasAreaProtegida: $('input[name="NumeroHectareasAreaProtegida"]').val(),
+                    IdIncautacion: $('#IdIncautacion').val(),
+                    IdDroga: $('#IdDroga').val(),
+                    IdMatasArbustos: $('#IdMatasArbustos').val(),
+                    NumeroMatasArbustos: $('input[name="NumeroMatasArbustos"]').val(),
+                    NumeroHectareas: $('input[name="NumeroHectareas"]').val(),
+                    MontoEnDolaresMatasArbustos: $('input[name="MontoEnDolaresMatasArbustos"]').val(),
+                    IdVehiculo: $('#IdVehiculo').val(),
+                    MontoEnDolaresDinero: $('input[name="MontoEnDolaresDinero"]').val(),
+                    MontoEnDolaresJoyas: $('input[name="MontoEnDolaresJoyas"]').val(),
+                    NumeroInmuebles: $('input[name="NumeroInmuebles"]').val(),
+                    NumeroFincas: $('input[name="NumeroFincas"]').val(),
+                    NumeroHectareasTerrenos: $('input[name="NumeroHectareasTerrenos"]').val(),
+                    IdPalabraClave: $('#IdPalabraClave').val()
+                };
+                localStorage.setItem('formData', JSON.stringify(formData));
+                localStorage.setItem('latitud', $('input[name="Latitud"]').val());
+                localStorage.setItem('longitud', $('input[name="Longitud"]').val());
+                window.location.href = '@Url.Action("MapaEditar", "NoticiaPeriodistica")' + '?id=' + formData.Id + '&idPalabraClave=' + formData.IdPalabraClave;
+            }
+
+            $(document).ready(function () {
+                // Obtener valores de localStorage
+                var formData = JSON.parse(localStorage.getItem('formData'));
+                if (formData) {
+                    $('input[name="Titulo"]').val(formData.Titulo);
+                    $('input[name="UrlFuente"]').val(formData.UrlFuente);
+                    $('input[name="NombreFuente"]').val(formData.NombreFuente);
+                    $('input[name="FechaPublicacion"]').val(formData.FechaPublicacion);
+                    $('input[name="AnoPublicacion"]').val(formData.AnoPublicacion);
+                    $('input[name="FechaHecho"]').val(formData.FechaHecho);
+                    $('input[name="AnoHecho"]').val(formData.AnoHecho);
+                    $('textarea[name="NotaGrande"]').val(formData.NotaGrande);
+                    $('#pais').val(formData.IdPais);
+                    $('#IdPalabraClave').val(formData.IdPalabraClave); // Restaurar palabra clave seleccionada
+
+                    // Cargar provincias si hay un país seleccionado
+                    if (formData.IdPais) {
+                        $.getJSON('@Url.Action("ObtenerProvincias", "NoticiaPeriodistica")', { paisId: formData.IdPais }, function (data) {
+                            var provinciaSelect = $('#provincia');
+                            provinciaSelect.empty();
+                            provinciaSelect.append('<option value="" disabled selected>Seleccione la provincia</option>');
+                            $.each(data, function (index, item) {
+                                provinciaSelect.append('<option value="' + item.id + '">' + item.nombreProvincia + '</option>');
+                            });
+                            $('#provincia').val(formData.IdDepartamento);
+
+                            // Cargar comarcas y distritos si hay una provincia seleccionada
+                            if (formData.IdDepartamento) {
+                                $.getJSON('@Url.Action("ObtenerComarcas", "NoticiaPeriodistica")', { provinciaId: formData.IdDepartamento }, function (data) {
+                                    var comarcaSelect = $('#comarca');
+                                    comarcaSelect.empty();
+                                    comarcaSelect.append('<option value="" disabled selected>Seleccione la comarca</option>');
+                                    $.each(data, function (index, item) {
+                                        comarcaSelect.append('<option value="' + item.id + '">' + item.nombreComarca + '</option>');
+                                    });
+                                    $('#comarca').val(formData.IdComarca);
+                                });
+
+                                $.getJSON('@Url.Action("ObtenerDistritos", "NoticiaPeriodistica")', { provinciaId: formData.IdDepartamento }, function (data) {
+                                    var distritoSelect = $('#distrito');
+                                    distritoSelect.empty();
+                                    distritoSelect.append('<option value="" disabled selected>Seleccione el distrito</option>');
+                                    $.each(data, function (index, item) {
+                                        distritoSelect.append('<option value="' + item.id + '">' + item.nombreDistrito + '</option>');
+                                    });
+                                    $('#distrito').val(formData.IdMunicipio);
+
+                                    // Cargar corregimientos si hay un distrito seleccionado
+                                    if (formData.IdMunicipio) {
+                                        $.getJSON('@Url.Action("ObtenerCorregimientos", "NoticiaPeriodistica")', { distritoId: formData.IdMunicipio }, function (data) {
+                                            var corregimientoSelect = $('#corregimiento');
+                                            corregimientoSelect.empty();
+                                            corregimientoSelect.append('<option value="" disabled selected>Seleccione el corregimiento</option>');
+                                            $.each(data, function (index, item) {
+                                                corregimientoSelect.append('<option value="' + item.id + '">' + item.nombreCorregimiento + '</option>');
+                                            });
+                                            $('#corregimiento').val(formData.IdAldea);
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                    $('input[name="rutaCarretera"]').val(formData.rutaCarretera);
+                    $('input[name="NombreCartel"]').val(formData.NombreCartel);
+                    $('input[name="NombreOperacionPolicial"]').val(formData.NombreOperacionPolicial);
+                    $('#huboViolencia').val(formData.huboViolencia);
+                    $('#tipoTransporte').val(formData.tipoTransporte);
+                    $('input[name="CantidadEnKilos"]').val(formData.CantidadEnKilos);
+                    $('input[name="MontoEnDolaresTransporte"]').val(formData.MontoEnDolaresTransporte);
+                    $('input[name="NumeroPistasDestruidas"]').val(formData.NumeroPistasDestruidas);
+                    $('input[name="MontoEnDolaresIntentoSoborno"]').val(formData.MontoEnDolaresIntentoSoborno);
+                    $('textarea[name="BreveNota"]').val(formData.BreveNota);
+                    $('input[name="InstitucionResponsable"]').val(formData.InstitucionResponsable);
+                    $('input[name="InstitucionesDeApoyo"]').val(formData.InstitucionesDeApoyo);
+                    $('#IdSectorEconomico').val(formData.IdSectorEconomico);
+                    $('#IdEconomiaIlicita').val(formData.IdEconomiaIlicita);
+                    $('input[name="NombreFauna"]').val(formData.NombreFauna);
+                    $('input[name="CantidadFauna"]').val(formData.CantidadFauna);
+                    $('input[name="NombreFlora"]').val(formData.NombreFlora);
+                    $('input[name="CantidadFlora"]').val(formData.CantidadFlora);
+                    $('input[name="CantidadPersonasTrata"]').val(formData.CantidadPersonasTrata);
+                    $('#NacionalidadTrata').val(formData.NacionalidadTrata);
+                    $('input[name="NumeroDetenidos"]').val(formData.NumeroDetenidos);
+                    $('input[name="NacionalidadDetenidos"]').val(formData.NacionalidadDetenidos);
+                    $('input[name="NombreAreaProtegida"]').val(formData.NombreAreaProtegida);
+                    $('input[name="NumeroHectareasAreaProtegida"]').val(formData.NumeroHectareasAreaProtegida);
+                    $('#IdIncautacion').val(formData.IdIncautacion);
+                    $('#IdDroga').val(formData.IdDroga);
+                    $('#IdMatasArbustos').val(formData.IdMatasArbustos);
+                    $('input[name="NumeroMatasArbustos"]').val(formData.NumeroMatasArbustos);
+                    $('input[name="NumeroHectareas"]').val(formData.NumeroHectareas);
+                    $('input[name="MontoEnDolaresMatasArbustos"]').val(formData.MontoEnDolaresMatasArbustos);
+                    $('#IdVehiculo').val(formData.IdVehiculo);
+                    $('input[name="MontoEnDolaresDinero"]').val(formData.MontoEnDolaresDinero);
+                    $('input[name="MontoEnDolaresJoyas"]').val(formData.MontoEnDolaresJoyas);
+                    $('input[name="NumeroInmuebles"]').val(formData.NumeroInmuebles);
+                    $('input[name="NumeroFincas"]').val(formData.NumeroFincas);
+                    $('input[name="NumeroHectareasTerrenos"]').val(formData.NumeroHectareasTerrenos);
+                    localStorage.removeItem('formData');
+                }
+
+                var latitud = localStorage.getItem('latitud');
+                var longitud = localStorage.getItem('longitud');
+                if (latitud && longitud) {
+                    $('input[name="Latitud"]').val(latitud);
+                    $('input[name="Longitud"]').val(longitud);
+                    localStorage.removeItem('latitud');
+                    localStorage.removeItem('longitud');
+                }
+
+                $('#pais').change(function () {
+                    var paisId = $(this).val();
+                    if (paisId) {
+                        $.getJSON('@Url.Action("ObtenerProvincias", "NoticiaPeriodistica")', { paisId: paisId }, function (data) {
+                            var provinciaSelect = $('#provincia');
+                            provinciaSelect.empty();
+                            provinciaSelect.append('<option value="" disabled selected>Seleccione la provincia</option>');
+                            $.each(data, function (index, item) {
+                                provinciaSelect.append('<option value="' + item.id + '">' + item.nombreProvincia + '</option>');
+                            });
+                        });
+                    }
+                });
+
+                $('#provincia').change(function () {
+                    var provinciaId = $(this).val();
+                    if (provinciaId) {
+                        $.getJSON('@Url.Action("ObtenerComarcas", "NoticiaPeriodistica")', { provinciaId: provinciaId }, function (data) {
+                            var comarcaSelect = $('#comarca');
+                            comarcaSelect.empty();
+                            comarcaSelect.append('<option value="" disabled selected>Seleccione la comarca</option>');
+                            $.each(data, function (index, item) {
+                                comarcaSelect.append('<option value="' + item.id + '">' + item.nombreComarca + '</option>');
+                            });
+                        });
+
+                        $.getJSON('@Url.Action("ObtenerDistritos", "NoticiaPeriodistica")', { provinciaId: provinciaId }, function (data) {
+                            var distritoSelect = $('#distrito');
+                            distritoSelect.empty();
+                            distritoSelect.append('<option value="" disabled selected>Seleccione el distrito</option>');
+                            $.each(data, function (index, item) {
+                                distritoSelect.append('<option value="' + item.id + '">' + item.nombreDistrito + '</option>');
+                            });
+                        });
+                    }
+                });
+
+                $('#distrito').change(function () {
+                    var distritoId = $(this).val();
+                    if (distritoId) {
+                        $.getJSON('@Url.Action("ObtenerCorregimientos", "NoticiaPeriodistica")', { distritoId: distritoId }, function (data) {
+                            var corregimientoSelect = $('#corregimiento');
+                            corregimientoSelect.empty();
+                            corregimientoSelect.append('<option value="" disabled selected>Seleccione el corregimiento</option>');
+                            $.each(data, function (index, item) {
+                                corregimientoSelect.append('<option value="' + item.id + '">' + item.nombreCorregimiento + '</option>');
+                            });
+                        });
+                    }
+                });
+
+                $('#comarca').change(function () {
+                    var comarcaId = $(this).val();
+                    if (comarcaId) {
+                        $.getJSON('@Url.Action("ObtenerCorregimientos", "NoticiaPeriodistica")', { comarcaId: comarcaId }, function (data) {
+                            var corregimientoSelect = $('#corregimiento');
+                            corregimientoSelect.empty();
+                            corregimientoSelect.append('<option value="" disabled selected>Seleccione el corregimiento</option>');
+                            $.each(data, function (index, item) {
+                                corregimientoSelect.append('<option value="' + item.id + '">' + item.nombreCorregimiento + '</option>');
+                            });
+                        });
+                    }
+                });
+
+                // Habilitar/Deshabilitar campos según la economía ilícita seleccionada
+                $('#IdEconomiaIlicita').change(function () {
+                    var selectedValue = $(this).val();
+
+                    // Desactivar todos los campos inicialmente
+                    $('#NombreFauna').prop('disabled', true);
+                    $('#CantidadFauna').prop('disabled', true);
+                    $('#NombreFlora').prop('disabled', true);
+                    $('#CantidadFlora').prop('disabled', true);
+                    $('#CantidadPersonasTrata').prop('disabled', true);
+                    $('#NacionalidadTrata').prop('disabled', true);
+
+                    // Activar campos según la selección
+                    if (selectedValue == '4') { // tráfico de fauna
+                        $('#NombreFauna').prop('disabled', false);
+                        $('#CantidadFauna').prop('disabled', false);
+                    } else if (selectedValue == '5') { // tráfico de flora
+                        $('#NombreFlora').prop('disabled', false);
+                        $('#CantidadFlora').prop('disabled', false);
+                    } else if (selectedValue == '6') { // trata de personas
+                        $('#CantidadPersonasTrata').prop('disabled', false);
+                        $('#NacionalidadTrata').prop('disabled', false);
+                    }
+                });
+
+                //Tipo Transporte:
+                $('#tipoTransporte').change(function () {
+                    var selectedValue = $(this).val();
+
+                    // Activar o desactivar campos según la selección del tipo de transporte
+                    if (selectedValue) {
+                        $('#CantidadEnKilos').prop('disabled', false);
+                        $('#MontoEnDolaresTransporte').prop('disabled', false);
+                        $('#NumeroPistasDestruidas').prop('disabled', false);
+                    } else {
+                        $('#CantidadEnKilos').prop('disabled', true);
+                        $('#MontoEnDolaresTransporte').prop('disabled', true);
+                        $('#NumeroPistasDestruidas').prop('disabled', true);
+                    }
+                });
+
+                $('#IdIncautacion').change(function () {
+                    var selectedValue = $(this).val();
+
+                    // Desactivar todos los campos inicialmente
+                    $('#IdDroga').prop('disabled', true);
+                    $('#IdMatasArbustos').prop('disabled', true);
+                    $('#NumeroMatasArbustos').prop('disabled', true);
+                    $('#NumeroHectareas').prop('disabled', true);
+                    $('#MontoEnDolaresMatasArbustos').prop('disabled', true);
+                    $('#MontoEnDolaresDinero').prop('disabled', true);
+                    $('#MontoEnDolaresJoyas').prop('disabled', true);
+                    $('#NumeroInmuebles').prop('disabled', true);
+                    $('#NumeroFincas').prop('disabled', true);
+                    $('#NumeroHectareasTerrenos').prop('disabled', true);
+
+                    // Activar campos según la selección
+                    if (selectedValue == '4') { // Drogas
+                        $('#IdDroga').prop('disabled', false);
+                    } else if (selectedValue == '5') { // Matas o Arbustos
+                        $('#IdMatasArbustos').prop('disabled', false);
+                        $('#NumeroMatasArbustos').prop('disabled', false);
+                        $('#NumeroHectareas').prop('disabled', false);
+                        $('#MontoEnDolaresMatasArbustos').prop('disabled', false);
+                    } else if (selectedValue == '7') { // Dinero
+                        $('#MontoEnDolaresDinero').prop('disabled', false);
+                    } else if (selectedValue == '8') { // Joyas
+                        $('#MontoEnDolaresJoyas').prop('disabled', false);
+                    } else if (selectedValue == '9') { // Inmuebles
+                        $('#NumeroInmuebles').prop('disabled', false);
+                    } else if (selectedValue == '10') { // Terrenos
+                        $('#NumeroFincas').prop('disabled', false);
+                        $('#NumeroHectareasTerrenos').prop('disabled', false);
+                    }
+                });
+
+                // Ejecutar el cambio al cargar la página para asegurar que los campos se desactiven correctamente
+                $('#IdEconomiaIlicita').trigger('change');
+                $('#tipoTransporte').trigger('change');
+                $('#IdIncautacion').trigger('change');
+
+                //Probar el mapa, logica para el boton:
+                $('#IdPalabraClave').change(function () {
+                    var selectedValue = $(this).val();
+
+                    // Activar o desactivar campos según la selección del tipo de transporte
+                    if (selectedValue) {
+                        $('#botonMapa').prop('disabled', false);
+
+                    } else {
+                        $('#botonMapa').prop('disabled', true);
+                    }
+                });
+
+                // Verificar si hay una palabra clave seleccionada al cargar la página
+                if ($('#IdPalabraClave').val()) {
+                    $('#botonMapa').prop('disabled', false);
+                }
+            });
+        </script>
+    </div>
+</body>
+</html>

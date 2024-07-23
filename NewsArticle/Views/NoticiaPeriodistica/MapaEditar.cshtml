@@ -1,0 +1,138 @@
+﻿@model NewsArticle.Models.NotaPeriodistica
+
+@{
+    ViewData["Title"] = "Probar Mapa - Editar";
+    var notas = ViewBag.Notas as IEnumerable<string>; // Asegurando que ViewBag.Notas es un IEnumerable<string>
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <style>
+        #map {
+            height: 600px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>@ViewData["Title"]</h2>
+        <div id="map"></div>
+        <form method="post" class="mt-4">
+            <div class="form-group">
+                <label asp-for="Latitud" class="control-label">Latitud</label>
+                <input asp-for="Latitud" class="form-control" placeholder="Latitud" />
+                <span asp-validation-for="Latitud" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Longitud" class="control-label">Longitud</label>
+                <input asp-for="Longitud" class="form-control" placeholder="Longitud" />
+                <span asp-validation-for="Longitud" class="text-danger"></span>
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="goBack()">Regresar</button>
+            <button type="button" class="btn btn-primary" onclick="acceptLocation()">Aceptar</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script>
+        $(document).ready(function () {
+            var map = L.map('map').setView([8.9824, -79.5199], 8);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+            }).addTo(map);
+
+            var defaultIconUrl = L.Icon.Default.prototype.options.iconUrl; // Default Leaflet icon
+            var defaultIconRetinaUrl = L.Icon.Default.prototype.options.iconRetinaUrl; // Default Leaflet retina icon
+
+            var iconUrl = defaultIconUrl; // Default icon if not found
+            var iconRetinaUrl = defaultIconRetinaUrl; // Default retina icon if not found
+
+            var formData = JSON.parse(localStorage.getItem('formData'));
+
+            if (formData && formData.IdPalabraClave) {
+                var idPalabraClave = formData.IdPalabraClave;
+                var notas = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.Notas ?? new List<string>()));
+                var iconName = '';
+
+                // Verificar si la palabra clave está en las notas y si existe una imagen correspondiente
+                notas.forEach(function (nota) {
+                    if (nota) {
+                        var imagePath = '/images/icons/' + nota + '.png';
+                        if (imageExists(imagePath)) {
+                            iconName = nota;
+                            iconUrl = imagePath;
+                            iconRetinaUrl = imagePath; // Assuming the same path for retina icons
+                        }
+                    }
+                });
+            }
+
+            var customIcon = L.icon({
+                iconUrl: iconUrl,
+                iconRetinaUrl: iconRetinaUrl,
+                iconSize: [50, 82], // Larger icon size
+                iconAnchor: [25, 82],
+                popupAnchor: [1, -34],
+                shadowSize: [82, 82]
+            });
+
+            var marker = L.marker([8.9824, -79.5199], { icon: customIcon }).addTo(map);
+
+            L.Control.geocoder({
+                defaultMarkGeocode: false
+            })
+                .on('markgeocode', function (e) {
+                    var latlng = e.geocode.center;
+                    marker.setLatLng(latlng);
+                    map.setView(latlng, 13);
+                    $('input[name="Latitud"]').val(latlng.lat);
+                    $('input[name="Longitud"]').val(latlng.lng);
+                })
+                .addTo(map);
+
+            map.on('click', function (e) {
+                marker.setLatLng(e.latlng);
+                $('input[name="Latitud"]').val(e.latlng.lat);
+                $('input[name="Longitud"]').val(e.latlng.lng);
+            });
+
+            function resizeMap() {
+                setTimeout(function () {
+                    map.invalidateSize();
+                }, 500);
+            }
+
+            resizeMap();
+
+            function imageExists(image_url) {
+                var http = new XMLHttpRequest();
+                http.open('HEAD', image_url, false);
+                http.send();
+                return http.status != 404;
+            }
+        });
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function acceptLocation() {
+            var latitud = $('input[name="Latitud"]').val();
+            var longitud = $('input[name="Longitud"]').val();
+            localStorage.setItem('latitud', latitud);
+            localStorage.setItem('longitud', longitud);
+            window.location.href = '@Url.Action("Editar", "NoticiaPeriodistica", new { id = Model.Id })';
+        }
+    </script>
+</body>
+</html>

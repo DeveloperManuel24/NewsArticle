@@ -1,0 +1,23 @@
+﻿@model NewsArticle.Models.Transporte
+
+@{
+    ViewData["Title"] = "Crear Transporte";
+}
+
+<h1>Crear Transporte</h1>
+
+<div class="m-4">
+    <form asp-action="Crear" method="post">
+        <div class="form-group">
+            <label asp-for="TipoTransporte" class="control-label"></label>
+            <input asp-for="TipoTransporte" class="form-control" />
+            <span asp-validation-for="TipoTransporte" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Crear</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
