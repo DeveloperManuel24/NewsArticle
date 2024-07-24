@@ -1,15 +1,15 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using NewsArticle.Models;
 using NewsArticle.Servicios;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Mvc.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Configurar logging
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
+
+// Configurar IConfiguration
+var configuration = builder.Configuration;
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -60,7 +60,11 @@ builder.Services.AddSingleton<GeoLocationService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
