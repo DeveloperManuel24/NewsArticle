@@ -58,6 +58,7 @@ namespace NewsArticle.Controllers
             this.repositorioTransporte = repositorioTransporte;
             this.geoLocationService = geoLocationService;
         }
+
         public async Task<IActionResult> Index(string titulo, int? palabraClaveId, DateTime? fechaHecho, int? AnoHecho, int? paisId)
         {
             var usuarioId = servicioUsuarios.ObtenerUsuarioId();
@@ -82,7 +83,6 @@ namespace NewsArticle.Controllers
             ViewBag.PalabrasClaveList = new SelectList(await repositorioPalabrasClave.Obtener(usuarioId), "Id", "NombrePalabraClave");
             ViewBag.PaisesList = new SelectList(await repositorioPais.Obtener(), "Id", "NombrePais");
         }
-
 
         // GET: NoticiaPeriodisticaController/Detalles
         public async Task<IActionResult> ListadoCompleto(int id)
@@ -123,6 +123,7 @@ namespace NewsArticle.Controllers
             await repositorioNotaPeriodistica.Crear(notaPeriodistica);
             return RedirectToAction("Index");
         }
+
         public async Task<IActionResult> Mapa(int idPalabraClave, string returnAction)
         {
             var notas = await repositorioNotaPeriodistica.MostrarEnMapa(idPalabraClave);
@@ -130,7 +131,6 @@ namespace NewsArticle.Controllers
             ViewBag.Notas = notas;
             return View("Mapa");
         }
-
 
         public async Task<IActionResult> MapaEditar(int id, int idPalabraClave)
         {
@@ -152,7 +152,6 @@ namespace NewsArticle.Controllers
             var notasPeriodisticas = await repositorioNotaPeriodistica.ObtenerTodasLasNotas();
             return View(notasPeriodisticas);
         }
-
 
         [HttpGet]
         public async Task<IActionResult> Editar(int id)
@@ -366,6 +365,9 @@ namespace NewsArticle.Controllers
         new DataColumn("Número de Inmuebles"),
         new DataColumn("Número de Fincas"),
         new DataColumn("Número de Hectáreas Terrenos"),
+        new DataColumn("Número de Armas"),
+        new DataColumn("Número de Municiones"),
+        new DataColumn("Número de Vehículos"),
         new DataColumn("ID Usuario")
     });
 
@@ -425,6 +427,9 @@ namespace NewsArticle.Controllers
                     nota.NumeroInmuebles,
                     nota.NumeroFincas,
                     nota.NumeroHectareasTerrenos,
+                    nota.numeroArmas,
+                    nota.numeroMuniciones,
+                    nota.numeroVehiculos,
                     nota.IdUsuario
                 );
             }
@@ -443,7 +448,5 @@ namespace NewsArticle.Controllers
                 }
             }
         }
-
-
     }
 }

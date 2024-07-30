@@ -14,6 +14,7 @@ namespace NewsArticle.Servicios
         {
             connectionString = configuration.GetConnectionString("DefaultConnection")!;
         }
+
         public async Task Crear(NotaPeriodistica notaPeriodistica)
         {
             Console.WriteLine("IdSectorEconomico: " + notaPeriodistica.IdSectorEconomico);
@@ -32,7 +33,8 @@ namespace NewsArticle.Servicios
         monto_en_dolares_intento_soborno, id_incautacion, monto_en_dolares_dinero, 
         monto_en_dolares_joyas, numero_inmuebles, numero_fincas, numero_hectareas, 
         numero_matas_arbustos, id_droga, 
-        monto_en_dolares_matas_arbustos, breve_nota, nota_grande, id_vehiculo, ruta_carretera, id_transporte, numero_hectareas_terrenos,id_matas_arbustos
+        monto_en_dolares_matas_arbustos, breve_nota, nota_grande, id_vehiculo, ruta_carretera, id_transporte, numero_hectareas_terrenos,id_matas_arbustos,
+        numero_armas, numero_municiones, numero_vehiculos
     ) VALUES (
         @UrlFuente, @NombreFuente, @Titulo, @FechaPublicacion, @AnoPublicacion, 
         @FechaHecho, @AnoHecho, @IdPalabraClave, @IdSectorEconomico,
@@ -45,7 +47,8 @@ namespace NewsArticle.Servicios
         @MontoEnDolaresTransporte, @NumeroPistasDestruidas, @NumeroHectareasAreaProtegida, 
         @MontoEnDolaresIntentoSoborno, @IdIncautacion, @MontoEnDolaresDinero, 
         @MontoEnDolaresJoyas, @NumeroInmuebles, @NumeroFincas, @NumeroHectareas,@NumeroMatasArbustos, @IdDroga, 
-        @MontoEnDolaresMatasArbustos, @BreveNota, @NotaGrande, @IdVehiculo, @rutaCarretera, @tipoTransporte, @NumeroHectareasTerrenos,@IdMatasArbustos
+        @MontoEnDolaresMatasArbustos, @BreveNota, @NotaGrande, @IdVehiculo, @rutaCarretera, @tipoTransporte, @NumeroHectareasTerrenos,@IdMatasArbustos,
+        @NumeroArmas, @NumeroMuniciones, @NumeroVehiculos
     ) RETURNING id_nota;", notaPeriodistica);
             notaPeriodistica.Id = id;
         }
@@ -59,12 +62,16 @@ namespace NewsArticle.Servicios
                 url_fuente AS UrlFuente,
                 titulo AS Titulo, fecha_publicacion AS FechaPublicacion, 
                 fecha_hecho AS FechaHecho, 
-                p.nombre_pais AS MostrarNombrePaís,pc.palabra_clave AS MostrarNombrePalabraClave
+                p.nombre_pais AS MostrarNombrePaís,pc.palabra_clave AS MostrarNombrePalabraClave,
+                np.numero_armas AS NumeroArmas,
+                np.numero_municiones AS NumeroMuniciones,
+                np.numero_vehiculos AS NumeroVehiculos
             FROM notaperiodistica as np
             INNER JOIN pais p ON np.id_pais = p.id_pais
             INNER JOIN palabraclave pc ON np.id_palabra_clave = pc.id_palabra_clave 
             WHERE id_usuario = @idUsuario", new { idUsuario });
         }
+
         public async Task<NotaPeriodistica?> ObtenerPorId(int id, int idUsuario)
         {
             using var connection = new NpgsqlConnection(connectionString);
@@ -95,6 +102,9 @@ namespace NewsArticle.Servicios
                  np.breve_nota AS BreveNota, np.nota_grande AS NotaGrande, np.id_vehiculo AS IdVehiculo, 
                  np.ruta_carretera AS RutaCarretera, np.id_transporte AS TipoTransporte, 
                  np.numero_hectareas_terrenos AS NumeroHectareasTerrenos, np.id_matas_arbustos AS IdMatasArbustos,
+                 np.numero_armas AS NumeroArmas,
+                 np.numero_municiones AS NumeroMuniciones,
+                 np.numero_vehiculos AS NumeroVehiculos,
                  pc.palabra_clave AS MostrarNombrePalabraClave,
                  p.nombre_pais AS MostrarNombrePaís,
                  pd.nombre_provincia AS MostrarNombreDepartamento,
@@ -133,7 +143,6 @@ namespace NewsArticle.Servicios
              WHERE np.id_nota =  @Id AND np.id_usuario = @idUsuario;",
                                          new { Id = id, idUsuario });
         }
-
 
         public async Task Actualizar(NotaPeriodistica notaPeriodistica)
         {
@@ -192,11 +201,13 @@ namespace NewsArticle.Servicios
             ruta_carretera = @RutaCarretera, 
             id_transporte = @TipoTransporte, 
             numero_hectareas_terrenos = @NumeroHectareasTerrenos, 
-            id_matas_arbustos = @IdMatasArbustos
+            id_matas_arbustos = @IdMatasArbustos,
+            numero_armas = @NumeroArmas,
+            numero_municiones = @NumeroMuniciones,
+            numero_vehiculos = @NumeroVehiculos
         WHERE id_nota = @Id AND id_usuario = @IdUsuario;",
         notaPeriodistica);
         }
-
 
         public async Task Borrar(int id)
         {
@@ -212,7 +223,10 @@ namespace NewsArticle.Servicios
             n.titulo, 
             n.latitud, 
             n.longitud, 
-            p.palabra_clave AS nombrePalabraClave 
+            p.palabra_clave AS nombrePalabraClave,
+            n.numero_armas AS NumeroArmas,
+            n.numero_municiones AS NumeroMuniciones,
+            n.numero_vehiculos AS NumeroVehiculos
         FROM notaperiodistica n
         INNER JOIN palabraclave p ON p.id_palabra_clave = n.id_palabra_clave");
         }
@@ -228,8 +242,7 @@ namespace NewsArticle.Servicios
             return await connection.QueryAsync<string>(query, new { Id = id });
         }
 
-
-        //Filtros:
+        // Filtros:
         public async Task<IEnumerable<NotaPeriodistica>> ObtenerConFiltros(int idUsuario, string titulo, int? palabraClaveId, DateTime? fechaHecho, int? AnoHecho, int? paisId)
         {
             using var connection = new NpgsqlConnection(connectionString);
@@ -242,7 +255,10 @@ namespace NewsArticle.Servicios
             fecha_hecho AS FechaHecho, 
             ano_hecho AS AnoHecho,
             p.nombre_pais AS MostrarNombrePaís,
-            pc.palabra_clave AS MostrarNombrePalabraClave
+            pc.palabra_clave AS MostrarNombrePalabraClave,
+            np.numero_armas AS NumeroArmas,
+            np.numero_municiones AS NumeroMuniciones,
+            np.numero_vehiculos AS NumeroVehiculos
         FROM notaperiodistica AS np
         INNER JOIN pais p ON np.id_pais = p.id_pais
         INNER JOIN palabraclave pc ON np.id_palabra_clave = pc.id_palabra_clave 
@@ -284,7 +300,7 @@ namespace NewsArticle.Servicios
             return await connection.QueryAsync<NotaPeriodistica>(query, parameters);
         }
 
-        //Reporte Excel
+        // Reporte Excel
         public async Task<IEnumerable<NotaPeriodistica>> ObtenerParaReporte(int idUsuario, string titulo, int? palabraClaveId, DateTime? fechaHecho, int? AnoHecho, int? paisId)
         {
             using var connection = new NpgsqlConnection(connectionString);
@@ -357,7 +373,10 @@ namespace NewsArticle.Servicios
             i.tipo_incautacion AS MostrarNombreIncautación,
             d.tipo_droga AS MostrarNombreDroga,
             ma.tipo_matas_arbustos AS MostrarNombreMatasArbustos,
-            v.tipo_vehiculo AS MostrarNombreVehículo
+            v.tipo_vehiculo AS MostrarNombreVehículo,
+            np.numero_armas AS NumeroArmas,
+            np.numero_municiones AS NumeroMuniciones,
+            np.numero_vehiculos AS NumeroVehiculos
         FROM notaperiodistica AS np
         LEFT JOIN palabraclave pc ON np.id_palabra_clave = pc.id_palabra_clave 
         LEFT JOIN pais p ON np.id_pais = p.id_pais
@@ -411,7 +430,5 @@ namespace NewsArticle.Servicios
 
             return await connection.QueryAsync<NotaPeriodistica>(query, parameters);
         }
-
-
     }
 }

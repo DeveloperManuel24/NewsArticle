@@ -402,6 +402,17 @@
                                     <span asp-validation-for="IdIncautacion" class="text-danger"></span>
                                 </div>
                                 <div class="form-group">
+                                    <label asp-for="numeroArmas" class="control-label">Número de Armas</label>
+                                    <input asp-for="numeroArmas" class="form-control" placeholder="Ingrese el número de matas o arbustos" id="NumeroArmas">
+                                    <span asp-validation-for="numeroArmas" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="numeroMuniciones" class="control-label">Número de Municiones</label>
+                                    <input asp-for="numeroMuniciones" class="form-control" placeholder="Ingrese el número de matas o arbustos" id="NumeroMuniciones">
+                                    <span asp-validation-for="numeroMuniciones" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
                                     <label asp-for="IdDroga" class="control-label">Drogas</label>
                                     <select asp-for="IdDroga" class="form-control" asp-items="ViewBag.DrogasList" id="IdDroga">
                                         <option value="" disabled selected>Seleccione una droga</option>
@@ -436,6 +447,11 @@
                                         <option value="" disabled selected>Seleccione un vehículo</option>
                                     </select>
                                     <span asp-validation-for="IdVehiculo" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="numeroVehiculos" class="control-label">Ingrese Número de Vehiculos</label>
+                                    <input asp-for="numeroVehiculos" class="form-control" placeholder="Ingrese el número de Vehiculos" id="NumeroVehiculos">
+                                    <span asp-validation-for="numeroVehiculos" class="text-danger"></span>
                                 </div>
                                 <div class="form-group">
                                     <label asp-for="MontoEnDolaresDinero" class="control-label">Monto en USD de Dinero</label>
@@ -489,76 +505,82 @@
         <script>
             function saveFormData() {
                 var formData = {
-                    Id: @Model.Id,
-                    Titulo: $('input[name="Titulo"]').val(),
-                    UrlFuente: $('input[name="UrlFuente"]').val(),
-                    NombreFuente: $('input[name="NombreFuente"]').val(),
-                    FechaPublicacion: $('input[name="FechaPublicacion"]').val(),
-                    AnoPublicacion: $('input[name="AnoPublicacion"]').val(),
-                    FechaHecho: $('input[name="FechaHecho"]').val(),
-                    AnoHecho: $('input[name="AnoHecho"]').val(),
-                    NotaGrande: $('textarea[name="NotaGrande"]').val(),
+                    Titulo: $('#Titulo').val(),
+                    UrlFuente: $('#UrlFuente').val(),
+                    NombreFuente: $('#NombreFuente').val(),
+                    FechaPublicacion: $('#FechaPublicacion').val(),
+                    AnoPublicacion: $('#AnoPublicacion').val(),
+                    FechaHecho: $('#FechaHecho').val(),
+                    AnoHecho: $('#AnoHecho').val(),
+                    NotaGrande: $('#NotaGrande').val(),
                     IdPais: $('#pais').val(),
                     IdDepartamento: $('#provincia').val(),
                     IdComarca: $('#comarca').val(),
                     IdMunicipio: $('#distrito').val(),
                     IdAldea: $('#corregimiento').val(),
-                    rutaCarretera: $('input[name="rutaCarretera"]').val(),
-                    NombreCartel: $('input[name="NombreCartel"]').val(),
-                    NombreOperacionPolicial: $('input[name="NombreOperacionPolicial"]').val(),
+                    rutaCarretera: $('#rutaCarretera').val(),
+                    NombreCartel: $('#NombreCartel').val(),
+                    NombreOperacionPolicial: $('#NombreOperacionPolicial').val(),
                     huboViolencia: $('#huboViolencia').val(),
                     tipoTransporte: $('#tipoTransporte').val(),
-                    CantidadEnKilos: $('input[name="CantidadEnKilos"]').val(),
-                    MontoEnDolaresTransporte: $('input[name="MontoEnDolaresTransporte"]').val(),
-                    NumeroPistasDestruidas: $('input[name="NumeroPistasDestruidas"]').val(),
-                    MontoEnDolaresIntentoSoborno: $('input[name="MontoEnDolaresIntentoSoborno"]').val(),
-                    BreveNota: $('textarea[name="BreveNota"]').val(),
-                    InstitucionResponsable: $('input[name="InstitucionResponsable"]').val(),
-                    InstitucionesDeApoyo: $('input[name="InstitucionesDeApoyo"]').val(),
+                    CantidadEnKilos: $('#CantidadEnKilos').val(),
+                    MontoEnDolaresTransporte: $('#MontoEnDolaresTransporte').val(),
+                    NumeroPistasDestruidas: $('#NumeroPistasDestruidas').val(),
+                    MontoEnDolaresIntentoSoborno: $('#MontoEnDolaresIntentoSoborno').val(),
+                    BreveNota: $('#BreveNota').val(),
+                    InstitucionResponsable: $('#InstitucionResponsable').val(),
+                    InstitucionesDeApoyo: $('#InstitucionesDeApoyo').val(),
                     IdSectorEconomico: $('#IdSectorEconomico').val(),
                     IdEconomiaIlicita: $('#IdEconomiaIlicita').val(),
-                    NombreFauna: $('input[name="NombreFauna"]').val(),
-                    CantidadFauna: $('input[name="CantidadFauna"]').val(),
-                    NombreFlora: $('input[name="NombreFlora"]').val(),
-                    CantidadFlora: $('input[name="CantidadFlora"]').val(),
-                    CantidadPersonasTrata: $('input[name="CantidadPersonasTrata"]').val(),
+                    NombreFauna: $('#NombreFauna').val(),
+                    CantidadFauna: $('#CantidadFauna').val(),
+                    NombreFlora: $('#NombreFlora').val(),
+                    CantidadFlora: $('#CantidadFlora').val(),
+                    CantidadPersonasTrata: $('#CantidadPersonasTrata').val(),
                     NacionalidadTrata: $('#NacionalidadTrata').val(),
-                    NumeroDetenidos: $('input[name="NumeroDetenidos"]').val(),
-                    NacionalidadDetenidos: $('input[name="NacionalidadDetenidos"]').val(),
-                    NombreAreaProtegida: $('input[name="NombreAreaProtegida"]').val(),
-                    NumeroHectareasAreaProtegida: $('input[name="NumeroHectareasAreaProtegida"]').val(),
+                    NumeroDetenidos: $('#NumeroDetenidos').val(),
+                    NacionalidadDetenidos: $('#NacionalidadDetenidos').val(),
+                    NombreAreaProtegida: $('#NombreAreaProtegida').val(),
+                    NumeroHectareasAreaProtegida: $('#NumeroHectareasAreaProtegida').val(),
                     IdIncautacion: $('#IdIncautacion').val(),
                     IdDroga: $('#IdDroga').val(),
                     IdMatasArbustos: $('#IdMatasArbustos').val(),
-                    NumeroMatasArbustos: $('input[name="NumeroMatasArbustos"]').val(),
-                    NumeroHectareas: $('input[name="NumeroHectareas"]').val(),
-                    MontoEnDolaresMatasArbustos: $('input[name="MontoEnDolaresMatasArbustos"]').val(),
+                    NumeroMatasArbustos: $('#NumeroMatasArbustos').val(),
+                    NumeroHectareas: $('#NumeroHectareas').val(),
+                    NumeroArmas: $('#NumeroArmas').val(),
+                    NumeroMuniciones: $('#NumeroMuniciones').val(),
+                    NumeroVehiculos: $('#NumeroVehiculos').val(),
+                    MontoEnDolaresMatasArbustos: $('#MontoEnDolaresMatasArbustos').val(),
                     IdVehiculo: $('#IdVehiculo').val(),
-                    MontoEnDolaresDinero: $('input[name="MontoEnDolaresDinero"]').val(),
-                    MontoEnDolaresJoyas: $('input[name="MontoEnDolaresJoyas"]').val(),
-                    NumeroInmuebles: $('input[name="NumeroInmuebles"]').val(),
-                    NumeroFincas: $('input[name="NumeroFincas"]').val(),
-                    NumeroHectareasTerrenos: $('input[name="NumeroHectareasTerrenos"]').val(),
-                    IdPalabraClave: $('#IdPalabraClave').val()
+                    MontoEnDolaresDinero: $('#MontoEnDolaresDinero').val(),
+                    MontoEnDolaresJoyas: $('#MontoEnDolaresJoyas').val(),
+                    NumeroInmuebles: $('#NumeroInmuebles').val(),
+                    NumeroFincas: $('#NumeroFincas').val(),
+                    NumeroHectareasTerrenos: $('#NumeroHectareasTerrenos').val(),
+                    IdPalabraClave: $('#IdPalabraClave').val() // Añadir palabra clave seleccionada
                 };
+
+                // Depuración de los valores
+                console.log('Formulario de datos guardados:', formData);
+
                 localStorage.setItem('formData', JSON.stringify(formData));
-                localStorage.setItem('latitud', $('input[name="Latitud"]').val());
-                localStorage.setItem('longitud', $('input[name="Longitud"]').val());
-                window.location.href = '@Url.Action("MapaEditar", "NoticiaPeriodistica")' + '?id=' + formData.Id + '&idPalabraClave=' + formData.IdPalabraClave;
+                localStorage.setItem('latitud', $('#Latitud').val());
+                localStorage.setItem('longitud', $('#Longitud').val());
+                window.location.href = '@Url.Action("Mapa", "NoticiaPeriodistica")' + '?idPalabraClave=' + formData.IdPalabraClave + '&returnAction=' + '@ViewBag.ReturnAction';
             }
 
             $(document).ready(function () {
                 // Obtener valores de localStorage
                 var formData = JSON.parse(localStorage.getItem('formData'));
                 if (formData) {
-                    $('input[name="Titulo"]').val(formData.Titulo);
-                    $('input[name="UrlFuente"]').val(formData.UrlFuente);
-                    $('input[name="NombreFuente"]').val(formData.NombreFuente);
-                    $('input[name="FechaPublicacion"]').val(formData.FechaPublicacion);
-                    $('input[name="AnoPublicacion"]').val(formData.AnoPublicacion);
-                    $('input[name="FechaHecho"]').val(formData.FechaHecho);
-                    $('input[name="AnoHecho"]').val(formData.AnoHecho);
-                    $('textarea[name="NotaGrande"]').val(formData.NotaGrande);
+                    $('#Titulo').val(formData.Titulo);
+                    $('#UrlFuente').val(formData.UrlFuente);
+                    $('#NombreFuente').val(formData.NombreFuente);
+                    $('#FechaPublicacion').val(formData.FechaPublicacion);
+                    $('#AnoPublicacion').val(formData.AnoPublicacion);
+                    $('#FechaHecho').val(formData.FechaHecho);
+                    $('#AnoHecho').val(formData.AnoHecho);
+                    $('#NotaGrande').val(formData.NotaGrande);
                     $('#pais').val(formData.IdPais);
                     $('#IdPalabraClave').val(formData.IdPalabraClave); // Restaurar palabra clave seleccionada
 
@@ -611,50 +633,53 @@
                         });
                     }
 
-                    $('input[name="rutaCarretera"]').val(formData.rutaCarretera);
-                    $('input[name="NombreCartel"]').val(formData.NombreCartel);
-                    $('input[name="NombreOperacionPolicial"]').val(formData.NombreOperacionPolicial);
+                    $('#rutaCarretera').val(formData.rutaCarretera);
+                    $('#NombreCartel').val(formData.NombreCartel);
+                    $('#NombreOperacionPolicial').val(formData.NombreOperacionPolicial);
                     $('#huboViolencia').val(formData.huboViolencia);
                     $('#tipoTransporte').val(formData.tipoTransporte);
-                    $('input[name="CantidadEnKilos"]').val(formData.CantidadEnKilos);
-                    $('input[name="MontoEnDolaresTransporte"]').val(formData.MontoEnDolaresTransporte);
-                    $('input[name="NumeroPistasDestruidas"]').val(formData.NumeroPistasDestruidas);
-                    $('input[name="MontoEnDolaresIntentoSoborno"]').val(formData.MontoEnDolaresIntentoSoborno);
-                    $('textarea[name="BreveNota"]').val(formData.BreveNota);
-                    $('input[name="InstitucionResponsable"]').val(formData.InstitucionResponsable);
-                    $('input[name="InstitucionesDeApoyo"]').val(formData.InstitucionesDeApoyo);
+                    $('#CantidadEnKilos').val(formData.CantidadEnKilos);
+                    $('#MontoEnDolaresTransporte').val(formData.MontoEnDolaresTransporte);
+                    $('#NumeroPistasDestruidas').val(formData.NumeroPistasDestruidas);
+                    $('#MontoEnDolaresIntentoSoborno').val(formData.MontoEnDolaresIntentoSoborno);
+                    $('#BreveNota').val(formData.BreveNota);
+                    $('#InstitucionResponsable').val(formData.InstitucionResponsable);
+                    $('#InstitucionesDeApoyo').val(formData.InstitucionesDeApoyo);
                     $('#IdSectorEconomico').val(formData.IdSectorEconomico);
                     $('#IdEconomiaIlicita').val(formData.IdEconomiaIlicita);
-                    $('input[name="NombreFauna"]').val(formData.NombreFauna);
-                    $('input[name="CantidadFauna"]').val(formData.CantidadFauna);
-                    $('input[name="NombreFlora"]').val(formData.NombreFlora);
-                    $('input[name="CantidadFlora"]').val(formData.CantidadFlora);
-                    $('input[name="CantidadPersonasTrata"]').val(formData.CantidadPersonasTrata);
+                    $('#NombreFauna').val(formData.NombreFauna);
+                    $('#CantidadFauna').val(formData.CantidadFauna);
+                    $('#NombreFlora').val(formData.NombreFlora);
+                    $('#CantidadFlora').val(formData.CantidadFlora);
+                    $('#CantidadPersonasTrata').val(formData.CantidadPersonasTrata);
                     $('#NacionalidadTrata').val(formData.NacionalidadTrata);
-                    $('input[name="NumeroDetenidos"]').val(formData.NumeroDetenidos);
-                    $('input[name="NacionalidadDetenidos"]').val(formData.NacionalidadDetenidos);
-                    $('input[name="NombreAreaProtegida"]').val(formData.NombreAreaProtegida);
-                    $('input[name="NumeroHectareasAreaProtegida"]').val(formData.NumeroHectareasAreaProtegida);
+                    $('#NumeroDetenidos').val(formData.NumeroDetenidos);
+                    $('#NacionalidadDetenidos').val(formData.NacionalidadDetenidos);
+                    $('#NombreAreaProtegida').val(formData.NombreAreaProtegida);
+                    $('#NumeroHectareasAreaProtegida').val(formData.NumeroHectareasAreaProtegida);
                     $('#IdIncautacion').val(formData.IdIncautacion);
                     $('#IdDroga').val(formData.IdDroga);
                     $('#IdMatasArbustos').val(formData.IdMatasArbustos);
-                    $('input[name="NumeroMatasArbustos"]').val(formData.NumeroMatasArbustos);
-                    $('input[name="NumeroHectareas"]').val(formData.NumeroHectareas);
-                    $('input[name="MontoEnDolaresMatasArbustos"]').val(formData.MontoEnDolaresMatasArbustos);
+                    $('#NumeroMatasArbustos').val(formData.NumeroMatasArbustos);
+                    $('#NumeroHectareas').val(formData.NumeroHectareas);
+                    $('#MontoEnDolaresMatasArbustos').val(formData.MontoEnDolaresMatasArbustos);
                     $('#IdVehiculo').val(formData.IdVehiculo);
-                    $('input[name="MontoEnDolaresDinero"]').val(formData.MontoEnDolaresDinero);
-                    $('input[name="MontoEnDolaresJoyas"]').val(formData.MontoEnDolaresJoyas);
-                    $('input[name="NumeroInmuebles"]').val(formData.NumeroInmuebles);
-                    $('input[name="NumeroFincas"]').val(formData.NumeroFincas);
-                    $('input[name="NumeroHectareasTerrenos"]').val(formData.NumeroHectareasTerrenos);
+                    $('#MontoEnDolaresDinero').val(formData.MontoEnDolaresDinero);
+                    $('#MontoEnDolaresJoyas').val(formData.MontoEnDolaresJoyas);
+                    $('#NumeroInmuebles').val(formData.NumeroInmuebles);
+                    $('#NumeroFincas').val(formData.NumeroFincas);
+                    $('#NumeroHectareasTerrenos').val(formData.NumeroHectareasTerrenos);
+                    $('#NumeroArmas').val(formData.NumeroArmas);
+                    $('#NumeroMuniciones').val(formData.NumeroMuniciones);
+                    $('#NumeroVehiculos').val(formData.NumeroVehiculos);
                     localStorage.removeItem('formData');
                 }
 
                 var latitud = localStorage.getItem('latitud');
                 var longitud = localStorage.getItem('longitud');
                 if (latitud && longitud) {
-                    $('input[name="Latitud"]').val(latitud);
-                    $('input[name="Longitud"]').val(longitud);
+                    $('#Latitud').val(latitud);
+                    $('#Longitud').val(longitud);
                     localStorage.removeItem('latitud');
                     localStorage.removeItem('longitud');
                 }
@@ -724,86 +749,86 @@
                     }
                 });
 
-                // Habilitar/Deshabilitar campos según la economía ilícita seleccionada
-                $('#IdEconomiaIlicita').change(function () {
-                    var selectedValue = $(this).val();
+                // // Habilitar/Deshabilitar campos según la economía ilícita seleccionada
+                // $('#IdEconomiaIlicita').change(function () {
+                //     var selectedValue = $(this).val();
 
-                    // Desactivar todos los campos inicialmente
-                    $('#NombreFauna').prop('disabled', true);
-                    $('#CantidadFauna').prop('disabled', true);
-                    $('#NombreFlora').prop('disabled', true);
-                    $('#CantidadFlora').prop('disabled', true);
-                    $('#CantidadPersonasTrata').prop('disabled', true);
-                    $('#NacionalidadTrata').prop('disabled', true);
+                //     // Desactivar todos los campos inicialmente
+                //     $('#NombreFauna').prop('disabled', true);
+                //     $('#CantidadFauna').prop('disabled', true);
+                //     $('#NombreFlora').prop('disabled', true);
+                //     $('#CantidadFlora').prop('disabled', true);
+                //     $('#CantidadPersonasTrata').prop('disabled', true);
+                //     $('#NacionalidadTrata').prop('disabled', true);
 
-                    // Activar campos según la selección
-                    if (selectedValue == '4') { // tráfico de fauna
-                        $('#NombreFauna').prop('disabled', false);
-                        $('#CantidadFauna').prop('disabled', false);
-                    } else if (selectedValue == '5') { // tráfico de flora
-                        $('#NombreFlora').prop('disabled', false);
-                        $('#CantidadFlora').prop('disabled', false);
-                    } else if (selectedValue == '6') { // trata de personas
-                        $('#CantidadPersonasTrata').prop('disabled', false);
-                        $('#NacionalidadTrata').prop('disabled', false);
-                    }
-                });
+                //     // Activar campos según la selección
+                //     if (selectedValue == '4') { // tráfico de fauna
+                //         $('#NombreFauna').prop('disabled', false);
+                //         $('#CantidadFauna').prop('disabled', false);
+                //     } else if (selectedValue == '5') { // tráfico de flora
+                //         $('#NombreFlora').prop('disabled', false);
+                //         $('#CantidadFlora').prop('disabled', false);
+                //     } else if (selectedValue == '6') { // trata de personas
+                //         $('#CantidadPersonasTrata').prop('disabled', false);
+                //         $('#NacionalidadTrata').prop('disabled', false);
+                //     }
+                // });
 
-                //Tipo Transporte:
-                $('#tipoTransporte').change(function () {
-                    var selectedValue = $(this).val();
+                // //Tipo Transporte:
+                // $('#tipoTransporte').change(function () {
+                //     var selectedValue = $(this).val();
 
-                    // Activar o desactivar campos según la selección del tipo de transporte
-                    if (selectedValue) {
-                        $('#CantidadEnKilos').prop('disabled', false);
-                        $('#MontoEnDolaresTransporte').prop('disabled', false);
-                        $('#NumeroPistasDestruidas').prop('disabled', false);
-                    } else {
-                        $('#CantidadEnKilos').prop('disabled', true);
-                        $('#MontoEnDolaresTransporte').prop('disabled', true);
-                        $('#NumeroPistasDestruidas').prop('disabled', true);
-                    }
-                });
+                //     // Activar o desactivar campos según la selección del tipo de transporte
+                //     if (selectedValue) {
+                //         $('#CantidadEnKilos').prop('disabled', false);
+                //         $('#MontoEnDolaresTransporte').prop('disabled', false);
+                //         $('#NumeroPistasDestruidas').prop('disabled', false);
+                //     } else {
+                //         $('#CantidadEnKilos').prop('disabled', true);
+                //         $('#MontoEnDolaresTransporte').prop('disabled', true);
+                //         $('#NumeroPistasDestruidas').prop('disabled', true);
+                //     }
+                // });
 
-                $('#IdIncautacion').change(function () {
-                    var selectedValue = $(this).val();
+                // $('#IdIncautacion').change(function () {
+                //     var selectedValue = $(this).val();
 
-                    // Desactivar todos los campos inicialmente
-                    $('#IdDroga').prop('disabled', true);
-                    $('#IdMatasArbustos').prop('disabled', true);
-                    $('#NumeroMatasArbustos').prop('disabled', true);
-                    $('#NumeroHectareas').prop('disabled', true);
-                    $('#MontoEnDolaresMatasArbustos').prop('disabled', true);
-                    $('#MontoEnDolaresDinero').prop('disabled', true);
-                    $('#MontoEnDolaresJoyas').prop('disabled', true);
-                    $('#NumeroInmuebles').prop('disabled', true);
-                    $('#NumeroFincas').prop('disabled', true);
-                    $('#NumeroHectareasTerrenos').prop('disabled', true);
+                //     // Desactivar todos los campos inicialmente
+                //     $('#IdDroga').prop('disabled', true);
+                //     $('#IdMatasArbustos').prop('disabled', true);
+                //     $('#NumeroMatasArbustos').prop('disabled', true);
+                //     $('#NumeroHectareas').prop('disabled', true);
+                //     $('#MontoEnDolaresMatasArbustos').prop('disabled', true);
+                //     $('#MontoEnDolaresDinero').prop('disabled', true);
+                //     $('#MontoEnDolaresJoyas').prop('disabled', true);
+                //     $('#NumeroInmuebles').prop('disabled', true);
+                //     $('#NumeroFincas').prop('disabled', true);
+                //     $('#NumeroHectareasTerrenos').prop('disabled', true);
 
-                    // Activar campos según la selección
-                    if (selectedValue == '4') { // Drogas
-                        $('#IdDroga').prop('disabled', false);
-                    } else if (selectedValue == '5') { // Matas o Arbustos
-                        $('#IdMatasArbustos').prop('disabled', false);
-                        $('#NumeroMatasArbustos').prop('disabled', false);
-                        $('#NumeroHectareas').prop('disabled', false);
-                        $('#MontoEnDolaresMatasArbustos').prop('disabled', false);
-                    } else if (selectedValue == '7') { // Dinero
-                        $('#MontoEnDolaresDinero').prop('disabled', false);
-                    } else if (selectedValue == '8') { // Joyas
-                        $('#MontoEnDolaresJoyas').prop('disabled', false);
-                    } else if (selectedValue == '9') { // Inmuebles
-                        $('#NumeroInmuebles').prop('disabled', false);
-                    } else if (selectedValue == '10') { // Terrenos
-                        $('#NumeroFincas').prop('disabled', false);
-                        $('#NumeroHectareasTerrenos').prop('disabled', false);
-                    }
-                });
+                //     // Activar campos según la selección
+                //     if (selectedValue == '4') { // Drogas
+                //         $('#IdDroga').prop('disabled', false);
+                //     } else if (selectedValue == '5') { // Matas o Arbustos
+                //         $('#IdMatasArbustos').prop('disabled', false);
+                //         $('#NumeroMatasArbustos').prop('disabled', false);
+                //         $('#NumeroHectareas').prop('disabled', false);
+                //         $('#MontoEnDolaresMatasArbustos').prop('disabled', false);
+                //     } else if (selectedValue == '7') { // Dinero
+                //         $('#MontoEnDolaresDinero').prop('disabled', false);
+                //     } else if (selectedValue == '8') { // Joyas
+                //         $('#MontoEnDolaresJoyas').prop('disabled', false);
+                //     } else if (selectedValue == '9') { // Inmuebles
+                //         $('#NumeroInmuebles').prop('disabled', false);
+                //     } else if (selectedValue == '10') { // Terrenos
+                //         $('#NumeroFincas').prop('disabled', false);
+                //         $('#NumeroHectareasTerrenos').prop('disabled', false);
+                //     }
+                // });
 
-                // Ejecutar el cambio al cargar la página para asegurar que los campos se desactiven correctamente
-                $('#IdEconomiaIlicita').trigger('change');
-                $('#tipoTransporte').trigger('change');
-                $('#IdIncautacion').trigger('change');
+                // // Ejecutar el cambio al cargar la página para asegurar que los campos se desactiven correctamente
+                // $('#IdEconomiaIlicita').trigger('change');
+                // $('#tipoTransporte').trigger('change');
+                // $('#IdIncautacion').trigger('change');
 
                 //Probar el mapa, logica para el boton:
                 $('#IdPalabraClave').change(function () {
@@ -818,9 +843,11 @@
                     }
                 });
 
-                // Verificar si hay una palabra clave seleccionada al cargar la página
+                //Probar el mapa, logica para el boton:
                 if ($('#IdPalabraClave').val()) {
                     $('#botonMapa').prop('disabled', false);
+                } else {
+                    $('#botonMapa').prop('disabled', true);
                 }
             });
         </script>
