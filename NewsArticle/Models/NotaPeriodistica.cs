@@ -111,9 +111,10 @@ namespace NewsArticle.Models
         // Incautaciones
         public int? IdIncautacion { get; set; }
         public int numeroDinero { get; set; }
-        public int numeroArmas { get; set; }
-        public int numeroMuniciones { get; set; }
-        public int numeroVehiculos { get; set; }
+        public int? numeroArmas { get; set; }
+        public int? numeroMuniciones { get; set; }
+        public int? numeroVehiculos { get; set; }
+
         public int? IdDroga { get; set; }
         public int? IdMatasArbustos { get; set; }
         public int? NumeroMatasArbustos { get; set; }
